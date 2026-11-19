@@ -896,7 +896,7 @@ button:focus-visible,a:focus-visible{outline:3px solid currentColor;outline-offs
 }
 .poster-target::before{
   content:"";position:absolute;z-index:1;pointer-events:none;inset:-5% -17% -10%;
-  background:radial-gradient(ellipse at 50% 55%,rgba(16,17,16,.78) 16%,rgba(16,17,16,.45) 46%,transparent 73%);
+  background:radial-gradient(ellipse closest-side at 50% 55%,rgba(16,17,16,.78) 20%,rgba(16,17,16,.45) 58%,transparent 100%);
 }
 .poster-target .poster-heart{
   position:absolute;z-index:0;left:54%;top:32%;width:632px;height:632px;
@@ -991,7 +991,11 @@ body.on-question .progress-bar{visibility:hidden}
   .deck.entering-question>.question-poster::before{
     content:"";position:absolute;inset:0;background:var(--poster-field),var(--ink);opacity:var(--field-in);
   }
-  .entering-question>.cover .bleed{transform-origin:var(--chest-origin);transform:var(--camera)}
+  .entering-question>.cover.camera-covered{visibility:hidden}
+  .entering-question>.question-poster.ink-revealed .poster-heart>img{mask-image:none}
+  .entering-question>.question-poster.ink-revealed .heart-glint,
+  .entering-question>.question-poster.ink-revealed .heart-trace{display:none}
+  .entering-question>.cover .bleed{transform-origin:var(--chest-origin)}
   .entering-question>.cover .photo-muscle{opacity:var(--arm-light)}
   .entering-question>.cover :is(.cover-kicker,.hero-title,.cover-en,.lecture-head,.lecture-foot){opacity:var(--copy-out)}
   .entering-question>.cover .cover-kicker{translate:calc(-460px * var(--repel)) calc(-135px * var(--repel))}
@@ -1022,10 +1026,8 @@ body.on-question .progress-bar{visibility:hidden}
   .entering-question :is(.poster-prefix,.poster-heart-word,.poster-suffix){
     transform-origin:var(--depth-origin);transform:scale(var(--type-scale));opacity:var(--question-in);
     filter:blur(var(--type-blur));
-    mask-image:radial-gradient(ellipse 245px 300px at var(--depth-origin),rgba(0,0,0,var(--depth-pass)) 48%,black 98%);
   }
   .entering-question .poster-target::before{opacity:var(--question-in)}
-  .entering-question .glyph-stream{opacity:var(--stream-in)}
   body:has(.deck.entering-question) .progress-bar{visibility:hidden}
 }
 
@@ -1850,43 +1852,54 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       const posterCycle=posterElapsed/period;
       const advance=(t,from,to)=>smooth((t-from)/(to-from));
       const translate=(x,y)=>'translate('+x.toFixed(2)+'px,'+y.toFixed(2)+'px)';
+      const camera=cover.querySelector('.bleed').style;
+      const heartStyle=poster.querySelector('.poster-heart').style;
+      const line=poster.querySelector('.poster-line').style;
+      const term=poster.querySelector('.poster-term').style;
+      const stream=poster.querySelector('.glyph-stream').style;
       function paint(t){
         const zoom=advance(t,.225,.77),repel=advance(t,.16,.52);
         const depth=advance(t,.49,.735),pull=advance(t,.635,.925);
         const pan=point((heart.x-chest.x)*zoom,(heart.y-chest.y)*zoom);
         const scale=lerp(initialScale,1,zoom);
-        cover.style.setProperty('--camera',translate(pan.x,pan.y)+' scale('+(scale/initialScale).toFixed(5)+')');
+        camera.transform=translate(pan.x,pan.y)+' scale('+(scale/initialScale).toFixed(5)+')';
         cover.style.setProperty('--arm-light',1-advance(t,0,.23));
         cover.style.setProperty('--repel',repel);
         cover.style.setProperty('--copy-out',1-advance(t,.22,.51));
         poster.style.setProperty('--field-in',advance(t,.24,.68));
-        poster.style.setProperty('--heart-camera','translate(-50%,-50%) '+translate(chest.x+pan.x-heart.x,chest.y+pan.y-heart.y)+' scale('+scale.toFixed(5)+')');
+        heartStyle.setProperty('--heart-camera','translate(-50%,-50%) '+translate(chest.x+pan.x-heart.x,chest.y+pan.y-heart.y)+' scale('+scale.toFixed(5)+')');
         // Light travels from the apex along the silhouette, then sweeps
         // the colour across the same illustration. The chest stays in focus.
-        poster.style.setProperty('--outline-draw',1-Math.pow(1-clamp(t/.185),1.45));
-        poster.style.setProperty('--detail-draw',advance(t,.052,.205));
-        poster.style.setProperty('--ink-power',clamp(t/.012)*(1-advance(t,.215,.33)));
-        poster.style.setProperty('--ink-edge',lerp(-14,114,advance(t,.098,.288))+'%');
-        poster.style.setProperty('--ink-glint',.82*advance(t,.085,.115)*(1-advance(t,.26,.30)));
-        poster.style.setProperty('--chest-halo',advance(t,0,.12));
-        poster.style.setProperty('--heart-light',advance(t,0,.20)*(1-advance(t,.45,.78)));
-        poster.style.setProperty('--type-scale',lerp(.57,1,depth));
-        poster.style.setProperty('--type-blur',(7*(1-depth)).toFixed(2)+'px');
-        poster.style.setProperty('--question-in',depth);
-        poster.style.setProperty('--depth-pass',advance(t,.54,.715));
+        heartStyle.setProperty('--outline-draw',1-Math.pow(1-clamp(t/.185),1.45));
+        heartStyle.setProperty('--detail-draw',advance(t,.052,.205));
+        heartStyle.setProperty('--ink-power',clamp(t/.012)*(1-advance(t,.215,.33)));
+        heartStyle.setProperty('--ink-edge',lerp(-14,114,advance(t,.098,.288))+'%');
+        heartStyle.setProperty('--ink-glint',.82*advance(t,.085,.115)*(1-advance(t,.26,.30)));
+        heartStyle.setProperty('--chest-halo',advance(t,0,.12));
+        heartStyle.setProperty('--heart-light',advance(t,0,.20)*(1-advance(t,.45,.78)));
+        line.setProperty('--type-scale',lerp(.57,1,depth));
+        cover.classList.toggle('camera-covered',t>=.68);
+        line.setProperty('--type-blur',(7*(1-depth)).toFixed(2)+'px');
+        line.setProperty('--question-in',depth);
+        poster.classList.toggle('ink-revealed',t>=.33);
         const dx=termLeft*(1-pull),dy=-76*(1-pull);
-        poster.style.setProperty('--term-position',translate(dx,dy));
-        poster.style.setProperty('--term-in',advance(t,.63,.785));
-        poster.style.setProperty('--stream-in',advance(t,.63,.76));
+        term.setProperty('--term-position',translate(dx,dy));
+        term.setProperty('--term-in',advance(t,.63,.785));
+        stream.opacity=advance(t,.63,.76);
         const cycle=posterCycle-(1-t)*questionMs/period;
-        poster.style.setProperty('--heartbeat',heartbeat(cycle-Math.floor(cycle)));
+        heartStyle.setProperty('--heartbeat',heartbeat(cycle-Math.floor(cycle)));
         if(t>=.62)glyphs.approach(cycle-.28*(1-pull),dx,dy);
       }
       function release(){
-        for(const name of ['chest-origin','camera','arm-light','repel','copy-out'])cover.style.removeProperty('--'+name);
-        for(const name of ['field-in','heart-camera','outline-draw','detail-draw','ink-power','ink-edge','ink-glint','chest-halo','heart-light','type-scale','type-blur','question-in','depth-pass','term-position','term-in','stream-in']){
-          poster.style.removeProperty('--'+name);
-        }
+        cover.classList.remove('camera-covered');
+        poster.classList.remove('ink-revealed');
+        for(const name of ['chest-origin','arm-light','repel','copy-out'])cover.style.removeProperty('--'+name);
+        poster.style.removeProperty('--field-in');
+        camera.removeProperty('transform');
+        stream.removeProperty('opacity');
+        for(const name of ['heartbeat','heart-camera','outline-draw','detail-draw','ink-power','ink-edge','ink-glint','chest-halo','heart-light'])heartStyle.removeProperty('--'+name);
+        for(const name of ['type-scale','type-blur','question-in'])line.removeProperty('--'+name);
+        for(const name of ['term-position','term-in'])term.removeProperty('--'+name);
         for(const el of words)el.style.removeProperty('--depth-origin');
         glyphs(posterCycle);
         poster.style.setProperty('--heartbeat',heartbeat(posterCycle));
