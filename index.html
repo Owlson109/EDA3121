@@ -1294,29 +1294,44 @@ html:lang(en) .specimen:last-child .length{font-size:47px;min-height:1.66em}
 }
 /* Colour proof for the third screen, with the original type, diagrams and timings. */
 .tpl-presenter-mode-reveal .slide.paper-study-sample{
-  --title-shadow-rgb:101,98,65;color:var(--poster-green);background:var(--poster-paper-field);
-  background-color:var(--poster-paper)
+  --title-shadow-rgb:101,98,65;color:var(--poster-green);
+  background:var(--poster-paper-field);background-color:var(--poster-paper);isolation:isolate
 }
-.paper-study-sample::before{content:"";position:absolute;inset:88% 0 0;border-top:2px solid var(--poster-gilt);
-  background:linear-gradient(110deg,var(--poster-green),var(--poster-deep) 73%);pointer-events:none}
-.paper-study-sample .lecture-head{color:#416050;border-color:#a39b87}
+/* One continuous wash runs underneath the type, figure and page furniture. */
+.paper-study-sample::before{
+  content:"";position:absolute;inset:-4%;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse 72% 142% at 103% 63%,
+    #183e32 0%,#204737 37%,#365d49 49%,#587963 57%,#8ca48c 65%,#bdcab3 72%,
+    #dce0ca 80%,#ece7d4 89%,rgba(241,231,211,0) 100%)
+}
+@media (prefers-reduced-motion:no-preference){
+  .paper-study-sample.is-active::before{animation:paper-wash-settle 1.35s cubic-bezier(.22,.66,.3,1) both}
+}
+@keyframes paper-wash-settle{from{opacity:.93;transform:translateX(1.4%)}to{opacity:1;transform:none}}
+.paper-study-sample .lecture-head{color:#416050;border:0;
+  background:linear-gradient(90deg,#91857488,#77846e66 45%,#d4dbba55) left bottom/100% 1px no-repeat}
+.paper-study-sample .lecture-head .type{color:#f0e7ce}
 .paper-study-sample .lecture-head .subject::before{background:var(--poster-bronze)}
-.paper-study-sample .stage-kicker{color:#55725d}
+.paper-study-sample .stage-kicker{color:#47634e}
 .paper-study-sample .study-title .accent-line{color:var(--poster-bronze)}
 .paper-study-sample .study-desc{color:#344b3e}
 .paper-study-sample .study-question{color:var(--poster-green)}
 .paper-study-sample .prompt-mark{background:linear-gradient(90deg,#98673b 15%,transparent)}
 .paper-study-sample .arm-panel{
   --deep-limb:#18392e;--mid-limb:#405f4f;--high-limb:#81947a;--field-lit:#4e7760;
-  --ghost-line:#9bb69d;--blue-line:#8ca78d;--metal-light:#c2cbb0;--tendon:#e5d7b8;
+  --ghost-line:#a8bea4;--blue-line:#95af94;--metal-light:#cbd1b7;--tendon:#e5d7b8;
   --gold:#efba7e;--gold-hot:#ffdfaa;--copper:#c78c57;--mint:#abdac2;--sage:#c2d3be;
-  --trail-ink:#b2efdb;--trail-fill:rgba(137,207,177,.17);isolation:isolate
+  --trail-ink:#b2efdb;--trail-fill:rgba(137,207,177,.17)
 }
-.paper-study-sample .arm-panel::before{inset:0 -74px -17px -24px;width:auto;z-index:-1;
-  border-radius:116px 0 0 0;border-top:2px solid var(--poster-gilt);border-left:2px solid var(--poster-gilt);
-  background:radial-gradient(ellipse at 53% 42%,#214a3b,transparent 73%),var(--poster-deep)}
-.paper-study-sample .lecture-foot{color:#c7d5c8}
-.paper-study-sample .foot-stage b{color:#ffe2b2}
+.paper-study-sample .arm-panel::before{content:none}
+.paper-study-sample [data-arm] g[mask] > path{
+  -webkit-mask-image:linear-gradient(#000 46%,transparent 99%);mask-image:linear-gradient(#000 46%,transparent 99%);
+  mask-origin:fill-box;mask-clip:fill-box
+}
+.paper-study-sample .joint-label{fill:#0b241c}
+.paper-study-sample .lecture-foot{color:#48614c}
+.paper-study-sample .foot-stage b{color:#72452e}
+.paper-study-sample .foot-stage .slash{background:#9a9a80}
 
 #join-code{width:min(88vw,77vh,650px);max-height:94vh;box-sizing:border-box;margin:auto;padding:clamp(12px,2.6vh,26px);color:#f1ecdc;background:#132b27;border:1px solid #84998b;border-radius:18px;box-shadow:0 20px 100px #020b0a99;font:500 clamp(13px,2vh,19px)/1.35 system-ui,sans-serif;text-align:center}
 #join-code::backdrop{background:rgba(3,16,15,.81)}
