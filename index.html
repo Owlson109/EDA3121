@@ -1160,16 +1160,164 @@ html:lang(en) .specimen:last-child .length{font-size:47px;min-height:1.66em}
 .join-trigger:focus-visible,.join-trigger:hover{outline:2px solid var(--gold);outline-offset:3px}
 .cover .cover-tutor{position:absolute;bottom:calc(100% + 14px);left:0;color:var(--paper);font:530 28px/1.28 var(--font-sans);letter-spacing:.01em;white-space:nowrap}
 .brief-audience-view .brief-photo{opacity:0}
-.brief-wait{position:absolute;inset:0;display:grid;place-content:center;text-align:center;isolation:isolate;overflow:hidden;background:radial-gradient(ellipse at 45% 45%,#17352f 0%,#0d2320 47%,#071615 85%)}
-.wait-art{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
-.wait-arc{transform-origin:center;animation:wait-breathe 10s ease-in-out infinite alternate}
-.wait-arc:last-child{animation-delay:-5s;animation-direction:alternate-reverse}
-.wait-glint{stroke-dasharray:95 2050;animation:wait-trace 11s linear infinite}
-.brief-wait h1{font:650 90px/1.30 var(--font-sans);letter-spacing:-.035em;color:var(--paper);margin:0}
-.brief-wait h1 span{display:block;color:var(--gold-hot)}
-.brief-wait p{margin:35px auto 0;width:1180px;font:450 49px/1.34 var(--font-west);color:#b6cec3;text-wrap:balance}
-@keyframes wait-breathe{to{transform:translate(17px,-13px) scale(1.035);opacity:.66}}
-@keyframes wait-trace{to{stroke-dashoffset:-2145}}
+/* An illuminated type specimen. The two reading tracks share a clock. */
+.brief-wait,.paper-study-sample{
+  --poster-green:#153d33;--poster-bronze:#774632;--poster-paper:#f1e7d3;--poster-deep:#0c2923;--poster-gilt:#cdab80;
+  --poster-paper-field:radial-gradient(ellipse at 18% 24%,#fbf3e3 0%,transparent 59%),linear-gradient(121deg,#eee4ce,#ede3cf 68%,#dfcfb3);
+}
+.brief-wait{
+  --wait-cut:71%;--wait-cycle:12s;
+  position:absolute;inset:0;overflow:hidden;isolation:isolate;
+  color:var(--poster-green);background:linear-gradient(120deg,#153d32 0%,var(--poster-deep) 60%,#091f1b)
+}
+.wait-paper{position:absolute;inset:0 0 calc(100% - var(--wait-cut));overflow:hidden;pointer-events:none;
+  background:var(--poster-paper-field);background-color:var(--poster-paper);
+  border-bottom:3px solid var(--poster-gilt)}
+.wait-paper::before{content:"&";position:absolute;right:5.5%;top:42%;transform:translateY(-50%) rotate(-10deg);
+  font:italic 958px/.96 var(--font-west);letter-spacing:-.1em;color:#7e704918;-webkit-text-stroke:1.4px #a18a633d;
+  -webkit-mask-image:linear-gradient(115deg,transparent,#000 20%,#000 77%,transparent);mask-image:linear-gradient(115deg,transparent,#000 20%,#000 77%,transparent)}
+.wait-paper::after{content:"";position:absolute;inset:0;opacity:.055;background-size:120px 120px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23806d52' filter='url(%23paper)' d='M0 0h120v120H0z'/%3E%3C/svg%3E")}
+.wait-reflections{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.wait-reflections g{transform-box:view-box;transform-origin:50% 50%}
+.wait-ink-current{position:absolute;inset:var(--wait-cut) 0 0;overflow:hidden;pointer-events:none}
+.wait-ink-current::before{content:"";position:absolute;inset:-100% -28%;
+  background:radial-gradient(ellipse 48% 49% at 48% 92%,transparent 51%,#7da78d32 64%,#679b7c19 73%,transparent 88%),
+             radial-gradient(ellipse 32% 26% at 24% 40%,#507b6655,transparent 90%)}
+.wait-ink-current::after{content:"";position:absolute;top:0;left:-30%;width:42%;height:3px;
+  background:linear-gradient(90deg,transparent,#fbe5b8bd 48%,transparent)}
+@keyframes wait-sun-drift{
+  from{transform:translate(-7%,4%) rotate(-3deg)}to{transform:translate(9%,-6%) rotate(3deg)}
+}
+@keyframes wait-shade-drift{
+  from{transform:translate(8%,-3%) scaleY(.93)}to{transform:translate(-11%,6%) scaleY(1.09)}
+}
+@keyframes wait-ink-drift{
+  from{transform:translate(-8%,7%) rotate(3deg)}to{transform:translate(12%,-10%) rotate(-5deg)}
+}
+@keyframes wait-edge-light{
+  0%{transform:translateX(0);opacity:0}18%,70%{opacity:.85}100%{transform:translateX(300%);opacity:0}
+}
+.wait-copy{position:absolute;inset:0;z-index:2}
+.brief-wait h1{margin:0;color:inherit;line-height:1;letter-spacing:0}
+.wait-byline{position:absolute;top:6.6%;left:7.15%;right:7.15%;display:flex;align-items:baseline;gap:24px;
+  padding-bottom:24px;border-bottom:1.5px solid #9b947c;font:540 36px/1.12 var(--font-sans);letter-spacing:.04em}
+.wait-byline i{color:var(--poster-green);font:italic 78px/.97 var(--font-west);letter-spacing:-.07em}
+.wait-line{position:absolute;display:flex;align-items:baseline;white-space:nowrap}
+.wait-line-goals{top:20%;left:8.1%;font:700 185px/1.12 var(--font-serif);letter-spacing:-.055em}
+.wait-line-risks{top:43.5%;right:7%;font:660 164px/1.12 var(--font-serif);letter-spacing:-.055em}
+.wait-conjunction{align-self:center;margin:0 38px 0 0;font:500 63px/1 var(--font-serif);color:#625d49;
+  border-bottom:2px solid #9f8b6c;padding:0 4px 10px}
+.brief-wait [data-wait-term]{--read-delay:0s;--foil:#8a6630;--rule-ink:#bf8e51}
+.brief-wait [data-wait-term="risks"]{--read-delay:6s;--foil:#aa6a3f;--rule-ink:#ac7354}
+.brief-wait button[data-wait-term]{appearance:none;position:relative;padding:0;margin:0;
+  border:0;background:transparent;color:inherit;font:inherit;line-height:inherit;letter-spacing:inherit;text-align:left;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.brief-wait .wait-key{display:inline-flex;isolation:isolate}
+.brief-wait .wait-key[data-wait-term="risks"]{color:var(--poster-bronze)}
+.brief-wait button:focus-visible{outline:3px solid currentColor;outline-offset:8px;border-radius:4px}
+.wait-glyph{position:relative;display:inline-block;transform-origin:50% 78%}
+.wait-glyph::after{content:attr(data-ink);position:absolute;inset:0;pointer-events:none;color:var(--foil);opacity:0;
+  background:linear-gradient(143deg,var(--foil) 18%,#b29259 46%,var(--foil) 77%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.wait-echo{position:absolute;inset:0;display:block;pointer-events:none;color:transparent;
+  -webkit-text-stroke:2px var(--rule-ink);opacity:0}
+.wait-echo::before{content:attr(data-ink)}
+.wait-key::after{content:"";position:absolute;bottom:-.045em;left:0;width:100%;height:.10em;
+  border-bottom:.024em solid var(--rule-ink);border-radius:0 0 58% 30%;
+  opacity:.45;transform:scaleX(.15);transform-origin:0 60%;pointer-events:none}
+.brief-wait .wait-translation{position:absolute;top:75.3%;left:7.15%;right:6.8%;margin:0;max-width:1630px;
+  color:#d9e4d8;font:400 51px/1.22 var(--font-west);letter-spacing:-.018em;text-wrap:balance}
+.brief-wait .wait-translation [data-wait-term]{white-space:normal;color:#f3d59e;font-style:italic;
+  text-decoration:underline;text-decoration-color:#caac784f;text-underline-offset:.14em;text-decoration-thickness:1.5px}
+.brief-wait .wait-translation [data-wait-term="risks"]{color:#f2c3a4;text-decoration-color:#cd98744f}
+.brief-wait .wait-translation [data-wait-term].is-lit{color:#fff5d8;text-decoration-color:currentColor}
+.brief-wait .wait-key.is-lit::after{animation:none;opacity:1;transform:scaleX(1)}
+.wait-impression{position:absolute;z-index:1;width:1em;height:1em;pointer-events:none;opacity:0;
+  text-align:center;font:680 240px/1 var(--font-serif);color:transparent;-webkit-text-stroke:2.5px var(--press-ink,#928059)}
+.wait-impression::before{content:attr(data-ink)}
+.wait-impression::after{content:"";position:absolute;inset:-12%;border-radius:50%;
+  background:radial-gradient(ellipse,transparent 39%,#d8b6802e 58%,transparent 73%)}
+@keyframes wait-ink-pass{
+  0%,2%,35%,100%{opacity:0}10%,19%{opacity:.94}
+}
+@keyframes wait-pencil{
+  0%,3%,38%,100%{transform:scaleX(.15);opacity:.4}
+  16%,28%{transform:scaleX(1);opacity:.9}
+}
+@keyframes wait-register{
+  0%,5%,25%,100%{transform:translate(0,0);opacity:0}
+  12%{transform:translate(.025em,-.054em);opacity:.40}
+}
+@keyframes wait-english-ink{
+  0%,4%,36%,100%{text-decoration-color:transparent}
+  13%,25%{text-decoration-color:currentColor}
+}
+@keyframes wait-typeset{from{transform:translateY(.12em);opacity:.73}to{transform:translateY(0);opacity:1}}
+@media (prefers-reduced-motion:no-preference){
+  .is-active .wait-sun{animation:wait-sun-drift 11s ease-in-out -3s infinite alternate}
+  .is-active .wait-shade{animation:wait-shade-drift 16s ease-in-out -11s infinite alternate}
+  .is-active .wait-ink-current::before{animation:wait-ink-drift 13s ease-in-out -5s infinite alternate}
+  .is-active .wait-ink-current::after{animation:wait-edge-light 12s ease-in-out -4s infinite}
+  .is-active .wait-glyph{animation:wait-typeset .78s cubic-bezier(.16,.82,.26,1) both;
+    animation-delay:calc(var(--glyph-index) * 58ms + var(--entry-delay,0ms))}
+  .wait-line-risks{--entry-delay:280ms}
+  .is-active .wait-glyph::after{animation:wait-ink-pass var(--wait-cycle) linear infinite;
+    animation-delay:calc(var(--read-delay) + var(--glyph-index) * 135ms)}
+  .is-active .wait-echo{animation:wait-register var(--wait-cycle) ease-in-out infinite;animation-delay:var(--read-delay)}
+  .is-active .wait-translation button:not(.is-lit){animation:wait-english-ink var(--wait-cycle) linear infinite;animation-delay:var(--read-delay)}
+  .is-active .wait-key::after{animation:wait-pencil var(--wait-cycle) ease-in-out infinite;animation-delay:var(--read-delay)}
+  .brief-wait.is-hidden *,.brief-wait.is-hidden *::before,.brief-wait.is-hidden *::after{animation-play-state:paused!important}
+}
+.brief-wait .wait-key.is-lit .wait-glyph::after{animation:none;opacity:1}
+@media (hover:hover){.brief-wait .wait-key:hover::after{opacity:1}.brief-wait .wait-translation [data-wait-term]:hover{text-decoration-color:currentColor}}
+
+/* In portrait the poster fills the letterbox; the deck keeps its normal
+   canvas coordinates for the reversible transition into the cover. */
+@media screen and (max-aspect-ratio:4/5){
+  html:has(.brief-audience-view){overflow:hidden}
+  .deck:has(> .brief-audience-view.is-active),.deck.opening-cover:has(> .brief-audience-view){overflow:visible}
+  .brief-audience-view{--wait-height:calc(100dvh / var(--deck-scale,1));overflow:visible}
+  .brief-audience-view .brief-wait{top:calc((100% - var(--wait-height))/2);bottom:auto;height:var(--wait-height);--wait-cut:65%}
+  .wait-paper::before{top:43%;right:-6%;font-size:1750px}
+  .wait-byline{top:12%;left:7%;right:7%;gap:42px;font-size:68px;padding-bottom:62px}
+  .wait-byline i{font-size:146px}
+  .wait-line-goals{top:26.5%;left:7%;font-size:265px}
+  .wait-line-risks{top:41%;right:7%;font-size:222px}
+  .wait-conjunction{margin-right:34px;font-size:92px}
+  .brief-wait .wait-translation{top:69.2%;left:7%;right:7%;font-size:clamp(69px,calc(21px / var(--deck-scale,1)),110px);line-height:1.30;text-wrap:pretty}
+  .brief-audience-view .lecture-foot{bottom:calc((100% - var(--wait-height))/2 + max(18px,env(safe-area-inset-bottom)) / var(--deck-scale,1));
+    left:7%;right:6%;height:auto;font-size:calc(12px / var(--deck-scale,1))}
+  .brief-audience-view .deck-nav{gap:calc(5px / var(--deck-scale,1))}
+  .brief-audience-view .deck-nav button{width:calc(44px / var(--deck-scale,1));height:calc(44px / var(--deck-scale,1));border-radius:50%}
+  .brief-audience-view .deck-nav svg{width:50%;height:50%}
+}
+/* Colour proof for the third screen, with the original type, diagrams and timings. */
+.tpl-presenter-mode-reveal .slide.paper-study-sample{
+  --title-shadow-rgb:101,98,65;color:var(--poster-green);background:var(--poster-paper-field);
+  background-color:var(--poster-paper)
+}
+.paper-study-sample::before{content:"";position:absolute;inset:88% 0 0;border-top:2px solid var(--poster-gilt);
+  background:linear-gradient(110deg,var(--poster-green),var(--poster-deep) 73%);pointer-events:none}
+.paper-study-sample .lecture-head{color:#416050;border-color:#a39b87}
+.paper-study-sample .lecture-head .subject::before{background:var(--poster-bronze)}
+.paper-study-sample .stage-kicker{color:#55725d}
+.paper-study-sample .study-title .accent-line{color:var(--poster-bronze)}
+.paper-study-sample .study-desc{color:#344b3e}
+.paper-study-sample .study-question{color:var(--poster-green)}
+.paper-study-sample .prompt-mark{background:linear-gradient(90deg,#98673b 15%,transparent)}
+.paper-study-sample .arm-panel{
+  --deep-limb:#18392e;--mid-limb:#405f4f;--high-limb:#81947a;--field-lit:#4e7760;
+  --ghost-line:#9bb69d;--blue-line:#8ca78d;--metal-light:#c2cbb0;--tendon:#e5d7b8;
+  --gold:#efba7e;--gold-hot:#ffdfaa;--copper:#c78c57;--mint:#abdac2;--sage:#c2d3be;
+  --trail-ink:#b2efdb;--trail-fill:rgba(137,207,177,.17);isolation:isolate
+}
+.paper-study-sample .arm-panel::before{inset:0 -74px -17px -24px;width:auto;z-index:-1;
+  border-radius:116px 0 0 0;border-top:2px solid var(--poster-gilt);border-left:2px solid var(--poster-gilt);
+  background:radial-gradient(ellipse at 53% 42%,#214a3b,transparent 73%),var(--poster-deep)}
+.paper-study-sample .lecture-foot{color:#c7d5c8}
+.paper-study-sample .foot-stage b{color:#ffe2b2}
+
 #join-code{width:min(88vw,77vh,650px);max-height:94vh;box-sizing:border-box;margin:auto;padding:clamp(12px,2.6vh,26px);color:#f1ecdc;background:#132b27;border:1px solid #84998b;border-radius:18px;box-shadow:0 20px 100px #020b0a99;font:500 clamp(13px,2vh,19px)/1.35 system-ui,sans-serif;text-align:center}
 #join-code::backdrop{background:rgba(3,16,15,.81)}
 #join-code[open]{animation:join-reveal .38s cubic-bezier(.18,.78,.24,1) both}
@@ -1186,9 +1334,8 @@ html:lang(en) #join-code .join-en{display:inline}
 @keyframes join-reveal{from{opacity:0;transform:translateY(-7vh) scale(.82)}to{opacity:1;transform:none}}
 @keyframes join-leave{to{opacity:0;transform:translateY(-4vh) scale(.91)}}
 @keyframes join-shade{from{opacity:0}to{opacity:1}}
-.slide:not(.is-active) .wait-arc,.slide:not(.is-active) .wait-glint,.overview .wait-arc,.overview .wait-glint{animation-play-state:paused}
-@media (prefers-reduced-motion:reduce){.wait-arc,.wait-glint,#join-code[open],#join-code[open]::backdrop{animation:none!important}}
-@media print{.join-trigger,#join-code{display:none!important}.wait-arc,.wait-glint{animation:none}}
+@media (prefers-reduced-motion:reduce){#join-code[open],#join-code[open]::backdrop{animation:none!important}}
+@media print{.join-trigger,#join-code,.wait-reflections,.wait-ink-current{display:none!important}}
 </style>
 </head>
 
@@ -1355,7 +1502,37 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 -->
-<template id="waiting-intro"><div class="brief-wait"><svg class="wait-art" viewBox="0 0 1920 1080" aria-hidden="true"><g class="wait-arc" fill="none" stroke="#cc9e69" stroke-width="1.65"><path d="M-150 205 C190 -95 440 437 860 131 S1520 -90 2070 105" opacity=".26"/><path d="M-150 214 C190 -88 440 429 860 126 S1520 -94 2070 97" opacity=".26"/><path d="M-150 223 C190 -81 440 421 860 121 S1520 -98 2070 89" opacity=".26"/><path d="M-150 232 C190 -74 440 413 860 116 S1520 -102 2070 81" opacity=".26"/><path d="M-150 241 C190 -67 440 405 860 111 S1520 -106 2070 73" opacity=".26"/><path d="M-150 250 C190 -60 440 397 860 106 S1520 -110 2070 65" opacity=".26"/><path d="M-150 259 C190 -53 440 389 860 101 S1520 -114 2070 57" opacity=".26"/><path d="M-150 268 C190 -46 440 381 860 96 S1520 -118 2070 49" opacity=".26"/><path class="wait-glint" d="M-150 268 C190 -46 440 381 860 96 S1520 -118 2070 49" pathLength="2145" stroke-width="3" opacity=".85"/><path d="M-150 277 C190 -39 440 373 860 91 S1520 -122 2070 41" opacity=".26"/><path d="M-150 286 C190 -32 440 365 860 86 S1520 -126 2070 33" opacity=".26"/><path d="M-150 295 C190 -25 440 357 860 81 S1520 -130 2070 25" opacity=".26"/><path d="M-150 304 C190 -18 440 349 860 76 S1520 -134 2070 17" opacity=".26"/><path d="M-150 313 C190 -11 440 341 860 71 S1520 -138 2070 9" opacity=".26"/><path d="M-150 322 C190 -4 440 333 860 66 S1520 -142 2070 1" opacity=".26"/><path d="M-150 331 C190 3 440 325 860 61 S1520 -146 2070 -7" opacity=".26"/></g><g class="wait-arc" fill="none" stroke="#8fc5b3" stroke-width="1.65"><path d="M-170 920 C310 1190 700 726 1130 954 S1690 1052 2050 771" opacity=".26"/><path d="M-170 926 C310 1186 700 735 1130 950 S1690 1058 2050 769" opacity=".26"/><path d="M-170 932 C310 1182 700 744 1130 946 S1690 1064 2050 767" opacity=".26"/><path d="M-170 938 C310 1178 700 753 1130 942 S1690 1070 2050 765" opacity=".26"/><path d="M-170 944 C310 1174 700 762 1130 938 S1690 1076 2050 763" opacity=".26"/><path d="M-170 950 C310 1170 700 771 1130 934 S1690 1082 2050 761" opacity=".26"/><path d="M-170 956 C310 1166 700 780 1130 930 S1690 1088 2050 759" opacity=".26"/><path d="M-170 962 C310 1162 700 789 1130 926 S1690 1094 2050 757" opacity=".26"/><path class="wait-glint" d="M-170 962 C310 1162 700 789 1130 926 S1690 1094 2050 757" pathLength="2145" stroke-width="3" opacity=".85"/><path d="M-170 968 C310 1158 700 798 1130 922 S1690 1100 2050 755" opacity=".26"/><path d="M-170 974 C310 1154 700 807 1130 918 S1690 1106 2050 753" opacity=".26"/><path d="M-170 980 C310 1150 700 816 1130 914 S1690 1112 2050 751" opacity=".26"/><path d="M-170 986 C310 1146 700 825 1130 910 S1690 1118 2050 749" opacity=".26"/><path d="M-170 992 C310 1142 700 834 1130 906 S1690 1124 2050 747" opacity=".26"/><path d="M-170 998 C310 1138 700 843 1130 902 S1690 1130 2050 745" opacity=".26"/><path d="M-170 1004 C310 1134 700 852 1130 898 S1690 1136 2050 743" opacity=".26"/></g></svg><h1 lang="zh-HK">Nelson正在講解<span>學習目標和預計學習難點</span></h1><p lang="en">Nelson is explaining the learning objectives and anticipated learning difficulties.</p></div></template>
+<template id="waiting-intro">
+  <div class="brief-wait" translate="no">
+    <div class="wait-paper" aria-hidden="true">
+      <svg class="wait-reflections" viewBox="0 0 1920 770" preserveAspectRatio="none" focusable="false">
+        <defs>
+          <linearGradient id="wait-sunlight" x1="0" y1="0" x2=".36" y2="1">
+            <stop stop-color="#fff9e9" stop-opacity="0"/><stop offset=".58" stop-color="#fff9e9" stop-opacity=".14"/>
+            <stop offset=".96" stop-color="#fffcf2" stop-opacity=".60"/><stop offset="1" stop-color="#fcf1d7" stop-opacity=".26"/>
+          </linearGradient>
+          <linearGradient id="wait-shade" x1="0" y1=".1" x2=".7" y2="1">
+            <stop stop-color="#bf985c" stop-opacity="0"/><stop offset=".58" stop-color="#c49d65" stop-opacity=".06"/>
+            <stop offset="1" stop-color="#a9824c" stop-opacity=".19"/>
+          </linearGradient>
+        </defs>
+        <g class="wait-sun">
+          <path d="M-530 315C10 556 484 438 904 142S1720-202 2400 150L2420 419C1830 134 1594 50 1138 244S184 811-530 451Z" fill="url(#wait-sunlight)"/>
+          <path d="M-530 451C184 811 682 437 1138 244S1830 134 2420 419" fill="none" stroke="#fffbed" stroke-opacity=".55" stroke-width="2"/>
+        </g>
+        <g class="wait-shade">
+          <path d="M-500 795C74 375 405 411 852 553S1730 856 2390 391L2390 525C1825 919 1320 837 824 654S-3 578-500 925Z" fill="url(#wait-shade)"/>
+        </g>
+      </svg>
+    </div>
+    <div class="wait-ink-current" aria-hidden="true"></div>
+    <span class="wait-impression" aria-hidden="true"></span>
+    <div class="wait-copy">
+      <h1 lang="zh-HK"><span class="wait-byline"><i lang="en">Nelson</i>正在講解</span><span class="wait-line wait-line-goals"><button type="button" class="wait-key" data-wait-term="goals" aria-label="學習目標 · learning objectives">學習目標</button></span><span class="wait-line wait-line-risks"><span class="wait-conjunction">和</span><button type="button" class="wait-key" data-wait-term="risks" aria-label="預計學習難點 · anticipated learning difficulties">預計學習難點</button></span></h1>
+      <p class="wait-translation" lang="en">Nelson is explaining the <button type="button" data-wait-term="goals">learning objectives</button> and <button type="button" data-wait-term="risks">anticipated learning difficulties</button>.</p>
+    </div>
+  </div>
+</template>
 <template id="join-template"><dialog id="join-code" aria-labelledby="join-heading" data-no-swipe><header><h2 id="join-heading"><span class="join-zh" lang="zh-HK">掃碼加入同步簡報</span><span class="join-en" lang="en">Scan to join the presentation</span></h2><button type="button" aria-label="關閉 / Close" autofocus>×</button></header><img alt="QR code" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA1wAAANcAQAAAABjnpNpAAAEJ0lEQVR42u3dS47bMAwAUKro3rn/7eYG9gnYhT/62HEyQTEFiudF2tievIU2BEVSJePHruVX/OAFg8FgMBgMBoPBYDAYDAaDwWAwGAwGg8FgMBgMBoPBYDAYDAb7J9hSxuv0/nLcW9qnpTze+AFrBoPBYDAYbLt+D9/bNpnlsQUY6z/THCWmXL9m/yBvf8CawWAwGAwGe4ktfQZjKSVzjsicj+zHlFnK47h3TpBc51CsGQwGg8FgsHiSBzldU67Zj4iIyDW1sZQ1+xHrg6VEHq9YMxgMBoPBYH8jBlkekWvQsYckEbFtw5SL/RlrBoPBYDAY7KMY5JzQ2PIgXQok1+zHUvY8yN0PWDMYDAaDwWAvYpCLKo493tj3YrIPOvb9mUdXp2rNYDAYDAaD3V3lw/Nitm2YLhBJ58XAYDAYDAb7EKuDPurH6dpbbjMzs7bJbB/l+FtrBoPBYDAY7NmVzbW34NY7EdP2sX2NoyO3u3f1Xv26/7w1g8FgMBgMdo/t2Y/MrzYj0oYfX8e9zGyf1pDEmsFgMBgMBov36kHKMfp0uDcUnGZfGTL8r+3rVQ8Cg8FgMBgs7vdiul2Zpy+3eyzz8WB+9oq9GBgMBoPBYK9jkKGwox3TPrX1IKeg4z78EIPAYDAYDAZ7fV5MLfbYemCmvhw12uxHPRtmaImp/TPWDAaDwWAwWLzqixmSIfc5j2hbYtosiTwIDAaDwWCwD+pB8tTWkn1H7rBJc9XcqzcXBoPBYDDY23mQ6A5+yfaV81PzQWAwGAwGg/0NbEhofPV1HnEx/KMbh7qVhzyOn5qtGQwGg8FgsHh/TupVPcipWiSezSObTvUl8iAwGAwGg8Hi/tzc9qDcpUTElFGOjzjOzY2uk2adatbOMutOtLNmMBgMBoPBXsQgW6ixf5Q1GqmDUae8PCi3vtcOSx3GplozGAwGg8FglzHImukoe2yxRxnDrPZsYpVuunsZcyjWDAaDwWAw2Nt7Meu+y9xEGfUwmFP4sWc68iKbUppwxprBYDAYDAaL+97cq4ljc9uge5oecu6BMR8EBoPBYDDYd3tzhx6YOnS99uEupbSzQPYHbSSzlGLNYDAYDAaDxVt7Mcvj3CGzb82cOmTqK90PZLMXY81gMBgMBoO9iV2PTa2n13Vfy3HFOFl1tmYwGAwGg8HiOzWpezKkbY7p+nBzbMaN6DpkagGrmlQYDAaDwWDfmVEWY5tME42UZj5IjGNFru5ZMxgMBoPBYB/EIF28Ues8ropCyjho1ZrBYDAYDAZ7+7yY8/ExV522bdnHdPG3V5feXBgMBoPBYM+w0lyPo8x0KaWWmdbq1LZONSJO7btjg641g8FgMBgMtocR+XPWYs1gMBgMBoPBYDAYDAaDwWAwGAwGg8FgMBgMBoPBYDAYDAaDwf5L7A9k6aXYt1NCbgAAAABJRU5ErkJggg=="><a href="https://owlson109.github.io/EDA3121/#/intro" target="_blank" rel="noopener">https://owlson109.github.io/EDA3121/#/intro</a></dialog></template>
 <script>
 (() => {
@@ -1392,6 +1569,7 @@ SOFTWARE.
     intro.classList.add('brief-audience-view');
     intro.querySelectorAll('.lecture-head,.brief-intro,.brief-columns,.notes').forEach(el=>el.remove());
     intro.insertBefore(waiting.content,intro.querySelector('footer'));
+    initWaitingPoster(intro.querySelector('.brief-wait'));
   }else if(!params.has('preview') && window===window.top){
     const dialog=template.content.querySelector('dialog');
     document.body.append(dialog);
@@ -1417,6 +1595,120 @@ SOFTWARE.
     }).observe(intro,{attributes:true,attributeFilter:['class']});
   }
   waiting.remove();template.remove();
+
+  function initWaitingPoster(stage){
+    const words=Array.from(stage.querySelectorAll('.wait-key'));
+    const terms=Array.from(stage.querySelectorAll('[data-wait-term]'));
+    const impression=stage.querySelector('.wait-impression');
+    const reduced=matchMedia('(prefers-reduced-motion:reduce)');
+    let animations=[], releaseTimer, pointerStart;
+
+    for(const word of words){
+      const label=word.textContent;
+      word.replaceChildren();
+      Array.from(label).forEach((letter,i)=>{
+        const glyph=document.createElement('span');
+        glyph.className='wait-glyph';
+        glyph.setAttribute('aria-hidden','true');
+        glyph.style.setProperty('--glyph-index',i);
+        glyph.dataset.ink=letter;
+        glyph.textContent=letter;
+        word.append(glyph);
+      });
+      const echo=document.createElement('span');
+      echo.className='wait-echo';
+      echo.setAttribute('aria-hidden','true');
+      echo.dataset.ink=label;
+      word.append(echo);
+    }
+
+    function release(){
+      clearTimeout(releaseTimer);
+      for(const animation of animations) animation.cancel();
+      animations=[];
+      terms.forEach(term=>term.classList.remove('is-lit'));
+    }
+
+    function animate(el,frames,timing){
+      animations.push(el.animate(frames,timing));
+    }
+
+    stage.addEventListener('pointerdown',event=>{
+      pointerStart=event.isPrimary ? {x:event.clientX,y:event.clientY} : null;
+    },{passive:true});
+    stage.addEventListener('pointercancel',()=>{pointerStart=null;},{passive:true});
+    stage.addEventListener('click',event=>{
+      if(!intro.classList.contains('is-active') || intro.parentElement.classList.contains('opening-cover')) return;
+      const term=event.target.closest('[data-wait-term]');
+      const keyboard=event.detail===0;
+      if(keyboard && !term) return;
+      if(!keyboard && (!pointerStart || Math.hypot(event.clientX-pointerStart.x,event.clientY-pointerStart.y)>12)) return;
+      pointerStart=null;
+
+      // An untargeted tap picks the nearest heading. Measure screen-space
+      // rectangles so this also works in the scaled deck and portrait layout.
+      const rects=words.map(word=>word.getBoundingClientRect());
+      const distance=rect=>Math.hypot(
+        Math.max(rect.left-event.clientX,0,event.clientX-rect.right),
+        Math.max(rect.top-event.clientY,0,event.clientY-rect.bottom)
+      );
+      const word=term ? words.find(w=>w.dataset.waitTerm===term.dataset.waitTerm)
+                      : words[distance(rects[0])<=distance(rects[1]) ? 0 : 1];
+      const hit=(term||word).getBoundingClientRect();
+      const x=keyboard ? hit.left+hit.width/2 : event.clientX;
+      const y=keyboard ? hit.top+hit.height/2 : event.clientY;
+      const glyphs=Array.from(word.querySelectorAll('.wait-glyph'));
+      const first=Math.max(0,Math.min(glyphs.length-1,Math.floor((x-hit.left)/hit.width*glyphs.length)));
+
+      release();
+      terms.forEach(item=>item.classList.toggle('is-lit',item.dataset.waitTerm===word.dataset.waitTerm));
+      releaseTimer=setTimeout(release,1600);
+      if(reduced.matches || !word.animate) return;
+
+      const goal=word.dataset.waitTerm==='goals';
+      // The objective brings the outline into register. The difficulty
+      // briefly opens a space around the touched letter before settling.
+      const offset=goal?'translate(.085em,-.14em)':'translate(.045em,-.19em)';
+      const echo=word.querySelector('.wait-echo');
+      animate(echo,goal ? [
+        {opacity:0,transform:offset},{offset:.18,opacity:.82,transform:offset},
+        {opacity:0,transform:'translate(0,0)'}
+      ] : [
+        {opacity:0,transform:'translate(0,0)'},{offset:.34,opacity:.76,transform:offset},
+        {opacity:0,transform:'translate(.08em,-.26em)'}
+      ],{duration:1050,easing:'cubic-bezier(.2,.72,.23,1)'});
+
+      glyphs.forEach((glyph,i)=>{
+        const side=Math.sign(i-first);
+        const spread=side*(goal ? -.034 : .073);
+        const turn=side*(goal ? -1.3 : 2.4);
+        const peak=`translate(${spread}em,-.09em) rotate(${turn}deg)`;
+        animate(glyph,[{transform:'none'},{offset:.38,transform:peak},{transform:'none'}],
+          {duration:640,delay:Math.abs(i-first)*55,easing:'cubic-bezier(.23,.72,.25,1)'});
+      });
+
+      const bounds=stage.getBoundingClientRect();
+      impression.style.left=(x-bounds.left)/bounds.width*100+'%';
+      impression.style.top=(y-bounds.top)/bounds.height*100+'%';
+      impression.dataset.ink=glyphs[first].textContent;
+      impression.style.setProperty('--press-ink',y>stage.querySelector('.wait-paper').getBoundingClientRect().bottom?'#f1d6a9':goal?'#44755b':'#9b684a');
+      animate(impression,[
+        {opacity:0,transform:'translate(-50%,-50%) scale(.5)'},
+        {offset:.24,opacity:.52,transform:'translate(-50%,-52%) scale(.93)'},
+        {opacity:0,transform:'translate(-50%,-67%) scale(1.44)'}
+      ],{duration:1280,easing:'cubic-bezier(.17,.65,.23,1)'});
+    });
+    function visibility(){
+      stage.classList.toggle('is-hidden',document.hidden);
+      if(document.hidden) release();
+    }
+    document.addEventListener('visibilitychange',visibility);
+    visibility();
+    reduced.addEventListener('change',release);
+    new MutationObserver(()=>{
+      if(!intro.classList.contains('is-active')) release();
+    }).observe(intro,{attributes:true,attributeFilter:['class']});
+  }
 })();
 </script>
 <script>
@@ -2682,7 +2974,9 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       raf=requestAnimationFrame(frame);
     }
     sample(performance.now()-start);
-    raf=requestAnimationFrame(frame);
+    // The audience poster animates its own type. The hidden cover photo
+    // needs only its starting pose for the existing cover transition.
+    if(!section.classList.contains('brief-audience-view')) raf=requestAnimationFrame(frame);
     if(!isPreview){
       window.dispatchEvent(new CustomEvent('lesson-clock-start',{detail:{idx:sections.indexOf(section),epoch:origin}}));
     }
@@ -2887,11 +3181,15 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       logoEl.style.display = (slide && slide.hasAttribute('data-no-logo')) ? 'none' : '';
     }
 
-    const previewOnlyIdx = pageIndex(new URLSearchParams(location.search).get('preview'));
+    const previewOptions = new URLSearchParams(location.search);
+    const previewOnlyIdx = pageIndex(previewOptions.get('preview'));
     const isPreviewMode = previewOnlyIdx >= 0;
 
     /* ===== Preview-only mode: show one slide, hide everything else ===== */
     if (isPreviewMode) {
+      if (pages[previewOnlyIdx].key === '3' && previewOptions.get('palette') === 'paper') {
+        slides[previewOnlyIdx].classList.add('paper-study-sample');
+      }
       function showSlide(i) {
         slides.forEach((s, j) => {
           const active = (j === i);
@@ -3965,7 +4263,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
         if (!target || !target.closest) return false;
         /* Don't steal the gesture from the overview grid, the notes drawer,
            or anything the author made scrollable or tappable. */
-        return !!target.closest('.overview, .notes-overlay, a, button, input, textarea, select, [data-no-swipe]');
+        return !!target.closest('.overview, .notes-overlay, a, button:not([data-wait-term]), input, textarea, select, [data-no-swipe]');
       }
 
       document.addEventListener('touchstart', function(e){
@@ -4362,7 +4660,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
     const walker = root.ownerDocument.createTreeWalker(root, NodeFilter.SHOW_TEXT);
     for (let node; (node = walker.nextNode());) {
       const el = node.parentElement;
-      if (el.closest('script,style')) continue;
+      if (el.closest('script,style,[translate="no"]')) continue;
       const zh = node.data, en = english(zh, el);
       if (zh !== en) list.push(lang => { node.data = lang === 'en' ? en : zh; });
     }
