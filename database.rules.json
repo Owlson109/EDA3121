@@ -6,7 +6,7 @@
       "EDA3121": {
         "page": {
           ".read": true,
-          ".write": "auth != null && auth.uid === 'REPLACE_WITH_SPEAKER_UID'",
+          ".write": "auth != null && auth.uid === 'dzzoPm1NDsRJ2q3pHLyhvg0WaXr2'",
           ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 15 && newData.val() % 1 === 0"
         }
       }
