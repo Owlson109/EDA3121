@@ -1682,6 +1682,281 @@ html:lang(en) #join-code .join-en{display:inline}
 @media (prefers-reduced-motion:reduce){#join-code[open],#join-code[open]::backdrop{animation:none!important}}
 @media print{.join-trigger,#join-code,.wait-reflections,.wait-ink-current{display:none!important}}
 </style>
+<style id="eda-phone-layout">
+@media screen {
+  body.eda-pocket {height:100dvh; overflow:hidden}
+  body.eda-pocket .deck {
+    --pocket-inset:28px;
+    --pocket-tap:clamp(52px,calc(44px / var(--deck-scale)),83px);
+    overflow:hidden;
+  }
+  body.eda-pocket #eda-tools {top:max(4px,env(safe-area-inset-top));right:max(8px,env(safe-area-inset-right));gap:5px;font-size:12px}
+  body.eda-pocket #eda-language button {padding:4px 8px}
+  body.eda-pocket #eda-state {font-size:11px}
+  body.eda-pocket .deck .lecture-head {
+    left:var(--pocket-inset);right:var(--pocket-inset);top:57px;height:36px;padding:0 0 7px;gap:12px;
+  }
+  body.eda-pocket .deck .lecture-head .subject {font-size:17px;line-height:1.15;letter-spacing:.015em;gap:8px}
+  body.eda-pocket .deck .lecture-head .subject::before {width:18px;height:2px;flex:none}
+  body.eda-pocket .deck .lecture-head .type {font-size:14px;letter-spacing:.045em;white-space:nowrap}
+  body.eda-pocket .deck .lecture-foot {
+    left:var(--pocket-inset);right:var(--pocket-inset);bottom:max(8px,calc(env(safe-area-inset-bottom) / var(--deck-scale)));
+    height:var(--pocket-tap);gap:15px;font-size:18px;line-height:1.2;
+  }
+  body.eda-pocket .deck .foot-stage {min-width:0;gap:10px}
+  body.eda-pocket .deck .foot-stage b {white-space:nowrap}
+  body.eda-pocket .deck .foot-stage :is(b,span) {color:var(--sage)}
+  body.eda-pocket .deck .foot-stage b {color:var(--paper)}
+  body.eda-pocket .deck .deck-nav {flex:none;gap:4px}
+  body.eda-pocket .deck .deck-nav button {width:var(--pocket-tap);height:var(--pocket-tap);position:relative;border:0;background:transparent;color:var(--sage)}
+  body.eda-pocket .deck .deck-nav button::before {
+    content:"";position:absolute;inset:5px;border:1.5px solid var(--border-strong);border-radius:50%;pointer-events:none;
+  }
+  body.eda-pocket .deck .deck-nav button svg {width:30px;height:30px}
+  body.eda-pocket .deck .brief-audience-view .brief-wait {inset:0;height:100%;--wait-cut:64%}
+  body.eda-pocket .deck .wait-paper::before {font-size:550px;right:-7%}
+  body.eda-pocket .deck .wait-rule {top:16%;height:5%;font-size:38px;left:7%;right:7%}
+  body.eda-pocket .deck .wait-line-goals {top:28%;left:7%;font-size:82px}
+  body.eda-pocket .deck .wait-line-risks {top:42%;right:7%;font-size:68px}
+  body.eda-pocket .deck .wait-conjunction {font-size:29px;margin-right:10px;padding:0 1px 3px}
+  body.eda-pocket .deck .wait-translation {
+    top:68%;left:7%;right:7%;font-size:32px;line-height:1.26;letter-spacing:-.018em;text-wrap:pretty;
+  }
+  body.eda-pocket .deck .cover .bleed {inset:0 0 31%}
+  body.eda-pocket .deck .cover .img-frame img {object-fit:cover;object-position:77% 50%}
+  body.eda-pocket .deck .cover .img-scrim {
+    background:linear-gradient(180deg,rgba(4,17,16,.76),transparent 25%,transparent 55%,var(--ink) 100%);
+  }
+  body.eda-pocket .deck .brief-photo {inset:0 0 auto;width:100%;height:69%}
+  body.eda-pocket .deck .brief-photo img {object-position:77% 50%}
+  body.eda-pocket .deck .cover-copy {top:auto;bottom:13.8%;left:32px;right:28px;max-width:none}
+  body.eda-pocket .deck .cover .cover-kicker {font-size:18px;line-height:1.2;letter-spacing:.10em}
+  body.eda-pocket .deck .cover .hero-title {font-size:80px;line-height:1.04;margin:14px 0}
+  html:lang(en) body.eda-pocket .deck .cover .hero-title {font-size:66px;line-height:1.02}
+  body.eda-pocket .deck .cover .cover-en {font-size:30px;line-height:1.12}
+  body.eda-pocket .deck .cover .cover-tutor {font-size:20px;bottom:calc(100% + 4px)}
+  body.eda-pocket .deck .question-poster .poster-term {left:24px;top:22%;font-size:168px;line-height:1.08}
+  html:lang(en) body.eda-pocket .deck .question-poster .poster-term {font-size:96px;left:26px}
+  body.eda-pocket .deck .poster-quote {font-size:.43em}
+  body.eda-pocket .deck .poster-quote:first-child {margin:0 -2px 0 0}
+  body.eda-pocket .deck .poster-quote:last-child {margin:0 0 0 4px}
+  body.eda-pocket .deck .poster-line {
+    top:51%;left:32px;right:32px;display:grid;align-items:baseline;
+    grid-template-columns:1fr max-content max-content auto;gap:12px 3px;font-size:52px;white-space:normal;
+  }
+  html:lang(en) body.eda-pocket .deck .poster-line {font-size:42px}
+  body.eda-pocket .deck .poster-prefix {grid-column:1 / -1;grid-row:1}
+  body.eda-pocket .deck .poster-target {grid-column:2;grid-row:2;font-size:124px}
+  body.eda-pocket .deck .poster-suffix {grid-column:3;grid-row:2}
+  body.eda-pocket .deck .poster-heart {width:340px;height:340px}
+}
+@media screen and (max-width:767px) and (orientation:portrait){
+/* The question and its answer share a portrait figure slot so the arm or heel
+   can keep moving while the teaching text changes above it. */
+body.eda-pocket .deck > .slide:is(.laboratory,.practice,.heel-page){
+  --copy-floor:368px;
+  --reading-edge:calc(max(107px,.09 * var(--deck-h)) + max(var(--copy-floor),.30 * var(--deck-h)));
+  display:grid;
+  grid-template-columns:32px minmax(0,1fr) 32px;
+  grid-template-rows:max(107px,9%) minmax(max(var(--copy-floor),30%),max-content) minmax(0,1fr) 98px;
+  align-content:stretch;
+}
+body.eda-pocket .deck > .slide.practice{--copy-floor:380px}
+body.eda-pocket .deck > .slide.heel-page{--copy-floor:416px}
+body.eda-pocket .deck > .slide :is(.study-copy,.heel-copy){
+  position:relative;inset:auto;grid-area:2 / 2;min-width:0;width:auto;align-self:start;
+}
+body.eda-pocket .deck > .slide :is(.study-copy,.heel-copy) .stage-kicker{
+  font-size:21px;line-height:1.25;letter-spacing:.04em;gap:10px;margin:0 0 8px;
+}
+body.eda-pocket .deck > .slide :is(.study-title,.practice-title,.heel-title){
+  width:auto;margin:0;font-size:55px;line-height:1.08;white-space:normal;
+}
+body.eda-pocket .deck > .slide.study-prompt .study-title{font-size:50px}
+body.eda-pocket .deck > .slide .term-en{font-size:32px;line-height:1.12;margin-top:19px}
+body.eda-pocket .deck > .slide :is(.study-desc,.practice-desc,.heel-setup,.heel-instruction){
+  max-width:none;font-size:26px;line-height:1.31;letter-spacing:0;margin-top:12px;
+}
+body.eda-pocket .deck > .slide .study-question{
+  max-width:none;font-size:29px;line-height:1.25;margin-top:13px;
+}
+body.eda-pocket .deck > .slide .prompt-mark{width:58px;margin-top:15px;display:block}
+body.eda-pocket .deck > .slide .answer-gauge{
+  display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;
+  width:100%;padding:4px 0 0;margin-top:12px;border-top:1px solid var(--reading-rule);
+}
+body.eda-pocket .deck > .slide .gauge-legend{font-size:22px;line-height:1.18;letter-spacing:0}
+body.eda-pocket .deck > .slide .answer-gauge [data-fibre]{width:100%;height:90px;margin:0}
+body.eda-pocket .deck > .slide :is(.arm-panel,.heel-panel){
+  grid-area:3 / 1 / 4 / -1;align-self:stretch;justify-self:stretch;position:relative;
+  inset:auto;width:auto;height:auto;min-height:0;min-width:0;margin:0 22px;
+}
+body.eda-pocket .deck > .slide :is(.arm-panel,.heel-panel)::before{content:none}
+body.eda-pocket .deck > .slide :is([data-arm],[data-heel]){inset:0}
+body.eda-pocket .deck > .slide :is(.arm-panel,.heel-panel) svg{display:block}
+body.eda-pocket .deck > .slide :is(.arm-panel,.heel-panel) .figure-label{
+  font-size:clamp(35px,calc(111px - .064 * var(--deck-h)),49px);letter-spacing:.01em;
+}
+body.eda-pocket .deck > .slide :is(.arm-panel,.heel-panel) .joint-label{
+  font-size:clamp(30px,calc(108px - .062 * var(--deck-h)),47px);letter-spacing:0;
+}
+body.eda-pocket .deck > .slide .heel-panel .calf-comparison .joint-label{
+  text-anchor:end;transform:translateX(101px);
+}
+html:lang(en) body.eda-pocket .deck > .slide .arm-panel .joint-label{
+  transform:translate(76px,38px);
+}
+body.eda-pocket .deck > .slide .heel-panel .joint-label:not([text-anchor]){
+  text-anchor:end;transform:translateX(110px);
+}
+body.eda-pocket .deck > .slide:is(.answer-paper,.paper-turn){
+  --answer-field:linear-gradient(177deg,#f5edda,#eee7d3 calc(.7 * var(--reading-edge)),
+    #dbe0c9 calc(var(--reading-edge) - 16px),#b1c4a9 calc(var(--reading-edge) + 22px),
+    #607f6c calc(var(--reading-edge) + 84px),#2d5142 calc(var(--reading-edge) + 166px),
+    #133328 calc(var(--reading-edge) + 298px),#0b241e);
+  --focus-x:30%;--focus-y:23%;
+}
+body.eda-pocket .deck > .slide:is(.answer-paper,.paper-turn)::before{background-size:100% 100%}
+body.eda-pocket .deck > .slide:is(.answer-paper,.paper-turn) .lecture-head .type{
+  color:color-mix(in srgb,var(--sage),#45634f var(--copy-tone));
+}
+body.eda-pocket .deck > .slide:is(.answer-paper,.paper-turn) :is(.arm-panel,.heel-panel) :is(.figure-label,.joint-label){
+  fill:var(--paper-light);paint-order:stroke fill;stroke:#193c31;stroke-width:4px;stroke-linejoin:round;
+}
+body.eda-pocket .deck > .slide .rhythm{margin-top:13px}
+body.eda-pocket .deck > .slide .rhythm-row{
+  grid-template-columns:1fr 1.38fr auto;gap:12px;padding:6px 2px 6px 0;
+}
+body.eda-pocket .deck > .slide .rhythm-row .verb{font-size:29px;line-height:1.15}
+body.eda-pocket .deck > .slide .rhythm-row .answer{font-size:24px;line-height:1.2}
+body.eda-pocket .deck > .slide .rhythm-row .count{font-size:21px}
+body.eda-pocket .deck > .slide .follow-controls{margin-top:12px}
+body.eda-pocket .deck > .slide .beat-box{width:100%}
+body.eda-pocket .deck > .slide .beat-caption{font-size:20px;line-height:1.2}
+body.eda-pocket .deck > .slide .heel-phases{margin-top:12px}
+body.eda-pocket .deck > .slide .heel-row{
+  min-height:53px;grid-template-columns:27px minmax(0,1fr) auto;gap:8px;padding:3px 2px;
+}
+body.eda-pocket .deck > .slide .heel-letter{font-size:26px}
+body.eda-pocket .deck > .slide .heel-action{font-size:29px}
+body.eda-pocket .deck > .slide .heel-result{gap:8px}
+body.eda-pocket .deck > .slide .heel-result strong{font-size:27px}
+body.eda-pocket .deck > .slide .heel-result small{font-size:22px}
+body.eda-pocket .deck > .slide .heel-legend{gap:18px;margin-top:8px;font-size:21px;line-height:1.2}
+body.eda-pocket .deck > .slide .heel-legend b{margin-right:5px;font-size:21px}
+html:lang(en) body.eda-pocket .deck > .slide .heel-result{
+  display:grid;gap:0;justify-items:end;
+}
+}
+@media screen and (max-width:767px) and (orientation:portrait){
+  /* Stack the demonstrations in reading order and share space between them. */
+  body.eda-pocket .deck > :is(.squat-page,.gravity-page,.summary-page){
+    display:grid;grid-template-columns:28px minmax(0,1fr) 28px;
+    align-content:stretch;justify-content:stretch;
+    --transfer-top:103px;--transfer-bottom:94px;
+    --transfer-title:clamp(40px,calc(var(--deck-h) * .044),54px);
+    --transfer-copy:clamp(24px,calc(var(--deck-h) * .024),29px);
+  }
+  body.eda-pocket .deck > .squat-page{
+    grid-template-rows:var(--transfer-top) auto minmax(0,1fr) auto var(--transfer-bottom);
+  }
+  body.eda-pocket .deck > .summary-page{
+    grid-template-rows:var(--transfer-top) auto minmax(0,1fr) var(--transfer-bottom);
+  }
+  body.eda-pocket .deck > .gravity-page{
+    grid-template-rows:var(--transfer-top) auto repeat(2,minmax(0,1fr)) auto var(--transfer-bottom);
+    row-gap:0;
+  }
+  body.eda-pocket .deck :is(.squat-page,.summary-page,.gravity-page) > :is(.page-heading,.gravity-heading){
+    position:static;inset:auto;grid-area:2 / 2;margin:0;padding:0 0 12px;
+  }
+  body.eda-pocket .deck :is(.squat-page,.summary-page,.gravity-page) .stage-kicker{
+    font-size:19px;line-height:1.24;letter-spacing:.035em;gap:10px;
+  }
+  body.eda-pocket .deck :is(.squat-page,.summary-page,.gravity-page) :is(.page-heading,.gravity-heading) h2{
+    margin:8px 0 17px;font-size:var(--transfer-title);line-height:1.08;text-wrap:balance;
+  }
+  body.eda-pocket .deck :is(.squat-page,.summary-page,.gravity-page) :is(.line-instruction,.gravity-heading > p:last-child){
+    font-size:var(--transfer-copy);line-height:1.27;margin:0;
+  }
+  body.eda-pocket .deck :is(.squat-steps,.specimens){
+    position:static;inset:auto;grid-area:3 / 2;display:grid;min-height:0;
+    grid-template-columns:1fr;grid-template-rows:repeat(3,minmax(0,1fr));gap:0;
+  }
+  body.eda-pocket .deck .squat-step{
+    display:grid;grid-template-columns:43% minmax(0,1fr);grid-template-rows:1fr 1fr;column-gap:20px;
+    min-height:0;align-items:center;
+  }
+  body.eda-pocket .deck .squat-step [data-squat]{
+    grid-area:1 / 1 / 3 / 2;height:100%;min-height:0;width:100%;max-height:278px;align-self:center;
+  }
+  body.eda-pocket .deck .squat-step h3{grid-area:1 / 2;align-self:end;margin:0 0 5px;font-size:37px;line-height:1.13}
+  body.eda-pocket .deck .squat-value{
+    grid-area:2 / 2;align-self:start;display:flex;align-items:baseline;justify-content:flex-start;
+    flex-wrap:wrap;gap:0 9px;line-height:1.25;
+  }
+  body.eda-pocket .deck .squat-value strong{font-size:30px}
+  body.eda-pocket .deck :is(.squat-value span,.squat-value.unknown){font-size:25px}
+  body.eda-pocket .deck .squat-page .bottom-squat{
+    position:static;inset:auto;grid-area:4 / 2;padding-top:5px;
+  }
+  body.eda-pocket .deck .bottom-squat .muscle-key{font-size:22px;line-height:1.2;gap:8px}
+  body.eda-pocket .deck .bottom-squat .muscle-key::before{width:19px;height:5px}
+
+  body.eda-pocket .deck .gravity-study{
+    position:relative;inset:auto;width:auto;min-height:0;
+    grid-column:2;grid-template-columns:34% minmax(0,1fr);column-gap:18px;
+    grid-template-rows:minmax(0,1fr);
+    align-self:stretch;align-items:center;padding:8px 0;
+  }
+  body.eda-pocket .deck .gravity-descent{grid-row:3}
+  body.eda-pocket .deck .gravity-ascent{grid-row:4}
+  body.eda-pocket .deck .gravity-study .gravity-figure{
+    height:100%;min-height:0;max-height:260px;display:grid;grid-template-rows:minmax(0,1fr) auto;
+  }
+  body.eda-pocket .deck .gravity-figure [data-squat]{height:100%;min-height:0}
+  body.eda-pocket .deck .gravity-arrows{gap:12px;margin:0}
+  body.eda-pocket .deck .gravity-arrows > span{font-size:19px;gap:4px;white-space:nowrap}
+  body.eda-pocket .deck .gravity-arrows b{font-size:25px}
+  body.eda-pocket .deck .gravity-explanation h3{font-size:33px;line-height:1.08}
+  body.eda-pocket .deck .gravity-explanation > p:not(.gravity-mode){
+    min-block-size:0;font-size:var(--transfer-copy);line-height:1.24;margin:7px 0;
+  }
+  body.eda-pocket .deck .gravity-explanation .gravity-mode{font-size:32px;line-height:1.08;margin:0}
+  body.eda-pocket .deck .gravity-transfer{
+    position:static;inset:auto;grid-area:5 / 2;display:block;padding:7px 0 0;
+    font-size:21px;line-height:1.20;
+  }
+  body.eda-pocket .deck .gravity-transfer span{
+    display:block;margin-top:3px;font-size:26px;line-height:1.21;
+  }
+
+  body.eda-pocket .deck .specimen{
+    position:relative;display:grid;align-content:center;align-items:center;
+    grid-template-columns:51% minmax(0,1fr);column-gap:11px;min-height:0;padding:3px 0;
+  }
+  body.eda-pocket .deck .specimen :is(.length,.mode,.serif-en){grid-column:1}
+  body.eda-pocket .deck .specimen .length{
+    grid-row:1;min-height:0;font-size:40px;line-height:1.08;
+  }
+  body.eda-pocket .deck .specimen .length .small{font-size:inherit}
+  body.eda-pocket .deck .specimen .mode{grid-row:2;margin-top:8px;font-size:32px;line-height:1.13}
+  body.eda-pocket .deck .specimen .serif-en{grid-row:3;margin-top:4px;font-size:25px;line-height:1.12}
+  body.eda-pocket .deck .summary-page .specimen [data-fibre]{
+    grid-column:2;grid-row:1 / 4;align-self:center;width:100%;height:86px;margin:0;
+  }
+}
+
+/* Short portrait screens need a wider text column for the controlled-ascent example. */
+@media screen and (max-width:767px) and (orientation:portrait) and (min-aspect-ratio:3/5){
+  body.eda-pocket .deck > .gravity-page{--transfer-copy:22px}
+  body.eda-pocket .deck .gravity-study{grid-template-columns:31% minmax(0,1fr);column-gap:15px;padding-block:5px}
+  body.eda-pocket .deck .gravity-explanation :is(h3,.gravity-mode){font-size:30px}
+  body.eda-pocket .deck .gravity-arrows{gap:8px}
+  body.eda-pocket .deck .gravity-arrows > span{font-size:17px}
+}
+
+</style>
 </head>
 
 <body class="tpl-presenter-mode-reveal"><div class="deck" data-w="1920" data-h="1080" aria-label="肌肉的三種收縮">
@@ -2502,6 +2777,15 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
   }
 
 
+  // Visible coordinates within the cover photograph, in its original pixels.
+  function coverCrop(image) {
+    const width=1672,height=941;
+    if(!document.body.classList.contains('eda-pocket')||!image.clientWidth||!image.clientHeight)return [0,0,width,height];
+    const scale=Math.max(image.clientWidth/width,image.clientHeight/height);
+    const w=image.clientWidth/scale,h=image.clientHeight/scale;
+    const [x,y]=getComputedStyle(image).objectPosition.split(' ').map(p=>parseFloat(p)/100);
+    return [(width-w)*x,(height-h)*y,w,h];
+  }
   function photographicOverlay(plate) {
     const root=svg('svg',{viewBox:'0 0 1672 941',preserveAspectRatio:'xMidYMid slice','aria-hidden':'true'});
     const fibres=svg('g',{fill:'none','stroke-linecap':'round'});
@@ -2516,6 +2800,8 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       fibres.append(path);paths.push(path);
     }
     root.append(fibres);plate.append(root);
+    const photo=plate.parentElement.querySelector('img[data-image]');
+    new ResizeObserver(()=>root.setAttribute('viewBox',coverCrop(photo).join(' '))).observe(plate);
     return (t,gain)=>{
       fibres.setAttribute('opacity',(.32+.48*Math.sin(t*Math.PI*.88)+gain*.13).toFixed(3));
       paths.forEach((path,i)=>{
@@ -2592,8 +2878,11 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       }
       return points.length?points:[at(.52,.48)];
     }
+    let trailScale=1;
     function place(){
       if(!section.clientWidth||!section.clientHeight)return;
+      field.setAttribute('viewBox','0 0 '+section.clientWidth+' '+section.clientHeight);
+      trailScale=Math.min(1,Math.sqrt(section.clientWidth/1920));
       const starts=sources.map(el=>contour(el,true)),ends=sinks.map(el=>contour(el,false));
       for(const p of marks){
         const start=starts[p.source],end=ends[p.sink];
@@ -2606,8 +2895,8 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       for(const p of marks){
         p.a=point(p.origin.x+offsetX,p.origin.y+offsetY);
         const distance=p.d.x-p.a.x;
-        p.b=point(p.a.x+.36*distance,p.a.y-84+p.bow);
-        p.c=point(p.d.x-.19*distance,p.d.y-222+.78*p.bow);
+        p.b=point(p.a.x+.36*distance,p.a.y+(-84+p.bow)*trailScale);
+        p.c=point(p.d.x-.19*distance,p.d.y+(-222+.78*p.bow)*trailScale);
       }
       set(gradient,{x1:lanes[0].a.x,y1:lanes[0].a.y,x2:lanes[1].d.x,y2:lanes[1].d.y});
       wisps.setAttribute('d',lanes.map(p=>'M'+pair(p.a)+'C'+pair(p.b)+' '+pair(p.c)+' '+pair(p.d)).join(''));
@@ -2630,7 +2919,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
         const flight=travel-Math.floor(travel);
         const phase=flight+.045*pull*Math.sin(4*Math.PI*flight);
         const t=phase*(.50+.50*phase);
-        const pos=alongArc(p,t),size=p.size*(1-.76*t*t);
+        const pos=alongArc(p,t),size=p.size*(1-.76*t*t)*trailScale;
         p.el.setAttribute('transform','translate('+pair(pos)+') rotate('+round(p.rotation*(1-t))+') scale('+size.toFixed(3)+')');
         p.el.setAttribute('opacity',Math.min(1,p.alpha*(1+.18*pull)*smooth(phase/.085)*smooth((1-phase)/.08)).toFixed(3));
         p.el.setAttribute('fill',palette[Math.round(t*23)]);
@@ -2643,7 +2932,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
     }
     place();
     const layout=new ResizeObserver(()=>{place();render(lastCycle??0,lastX,lastY,true);});
-    for(const el of [...sources,...sinks])layout.observe(el);
+    for(const el of [section,...sources,...sinks])layout.observe(el);
     const paint=cycle=>render(cycle,0,0);
     paint.approach=(cycle,offsetX,offsetY)=>render(cycle,offsetX,offsetY);
     return paint;
@@ -2961,7 +3250,9 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       }
       // This point is on the chest of the actual cropped cover photograph.
       // The second anchor is measured from the live poster, including its font metrics.
-      const chest=locationOn(cover.querySelector('img[data-image]'),.720,.318);
+      const coverImage=cover.querySelector('img[data-image]');
+      const [cropX,cropY,cropW,cropH]=coverCrop(coverImage);
+      const chest=locationOn(coverImage,(.720*1672-cropX)/cropW,(.318*941-cropY)/cropH);
       const heart=locationOn(poster.querySelector('.poster-heart'),.5,.5);
       const termLeft=-locationOn(poster.querySelector('.poster-term'),1,0).x-62;
       const words=poster.querySelectorAll('.poster-prefix,.poster-heart-word,.poster-suffix');
@@ -3183,10 +3474,21 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       setLive(stroke.lifting?stroke.source:stroke.target);
       frame=requestAnimationFrame(tick);
     }
+    function fitForearm(){
+      if(document.body.classList.contains('eda-pocket')){
+        const scale=Math.max(deck.clientWidth/1920,deck.clientHeight/1080);
+        // Window the original turn at the same scale on both axes, so the
+        // wrist and dumbbell keep their proportions and the paper covers every corner.
+        arm.style.translate=(deck.clientWidth-1920*scale)/2+'px '+(deck.clientHeight-1080*scale)/2+'px';
+        arm.style.scale=String(scale);
+      }else{
+        arm.style.removeProperty('translate');arm.style.removeProperty('scale');
+      }
+    }
     function launch(){
       if(!stroke||ready===null)return;
       if(!ready){const clock=stroke.clock;clear();clock(Date.now());return;}
-      overlay.hidden=false;stroke.origin=performance.now();stroke.deadline=Date.now()+total;
+      fitForearm();overlay.hidden=false;stroke.origin=performance.now();stroke.deadline=Date.now()+total;
       announceClock();tick();
     }
     async function decode(){
@@ -3230,6 +3532,18 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
         clock(stroke.deadline+nextDuration(stroke.target,to));
       }
     }
+    let lastWidth=deck.clientWidth,lastHeight=deck.clientHeight;
+    new ResizeObserver(()=>{
+      if(lastWidth===deck.clientWidth&&lastHeight===deck.clientHeight)return;
+      lastWidth=deck.clientWidth;lastHeight=deck.clientHeight;
+      if(stroke)fitForearm();
+      if(question||opening||study){
+        // A camera path measured before rotation no longer lands on its
+        // subject. Resume the current page on its own animation clock.
+        clear();
+        if(active)play(active,Date.now()-art.get(active).frameMs);
+      }
+    }).observe(deck);
     return {start,clear};
   }
 
@@ -3523,11 +3837,19 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
 
     const w = parseInt(deck.getAttribute('data-w'), 10) || 1920;
     const h = parseInt(deck.getAttribute('data-h'), 10) || 1080;
-    deck.style.setProperty('--deck-w', w + 'px');
-    deck.style.setProperty('--deck-h', h + 'px');
+    const query = new URLSearchParams(location.search);
+    const viewer = window === window.top && query.get('present') !== '1' && !query.has('preview');
+    const portrait = matchMedia('screen and (max-width: 767px) and (orientation: portrait)');
 
     function fit() {
-      const scale = Math.min(window.innerWidth / w, window.innerHeight / h);
+      const pocket = viewer && portrait.matches;
+      const width = pocket ? 600 : w;
+      const viewport = window.visualViewport;
+      const visibleHeight = pocket && viewport && viewport.scale === 1 ? Math.min(innerHeight, viewport.height) : innerHeight;
+      const scale = Math.min(innerWidth / width, visibleHeight / (pocket ? 900 : h));
+      document.body.classList.toggle('eda-pocket', pocket);
+      deck.style.setProperty('--deck-w', width + 'px');
+      deck.style.setProperty('--deck-h', (pocket ? visibleHeight / scale : h) + 'px');
       deck.style.setProperty('--deck-scale', String(scale));
     }
     fit();
