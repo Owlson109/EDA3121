@@ -30,6 +30,7 @@ async function initLiveSync() {
     const state = warning || (role === 'ending' ? 'stopping' : config?.databaseURL && !connected ? (everConnected ? 'reconnect' : 'connecting') :
       role === 'starting' || controlling && (writing || resume) ? 'pending' : controlling ? 'live' :
       remote !== null ? 'follow' : 'free');
+    document.body.classList.toggle('audience-following', !presenter && connected && remote !== null);
     status.textContent = tr(state);
     button.hidden = !presenter;
     button.textContent = tr(controlling ? 'stop' : 'start');

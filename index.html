@@ -691,6 +691,9 @@ button:focus-visible,a:focus-visible{outline:3px solid currentColor;outline-offs
 .deck-nav button svg{width:23px;height:23px}
 .deck-nav button:hover{color:var(--gold-hot);background:var(--ink-mid);border-color:var(--gold)}
 .deck-nav button:disabled{opacity:.22;cursor:default}
+.deck-nav .overview-trigger{width:auto;display:inline-flex;align-items:center;gap:8px;padding:0 15px;font:600 20px var(--font-sans)}
+.poster-controls{justify-content:flex-end}
+body.audience-following .deck-nav [data-key^="Arrow"]{display:none}
 .deck-nav .open-presenter{margin-right:12px}
 [data-preview] .deck-nav,.overview .deck-nav,[data-preview] .replay,.overview .replay{visibility:hidden}
 .slide .stage-kicker,.slide .stage-tag{
@@ -820,7 +823,14 @@ button:focus-visible,a:focus-visible{outline:3px solid currentColor;outline-offs
 .notes-overlay{font-family:var(--font-sans);letter-spacing:0;font-size:18px;line-height:1.5}
 .notes-overlay p{margin:6px 0}
 .notes-overlay .time,.notes .time{font-family:var(--font-mono)}
+dialog.overview{width:100%;height:100%;max-width:none;max-height:none;margin:0;border:0;color:var(--paper);box-sizing:border-box}
+.overview .overview-heading{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between}
+.overview-heading h2{margin:0;font:600 clamp(20px,3vw,32px) var(--font-sans)}
+.overview-heading button{background:transparent;color:inherit;border:1px solid var(--sage);border-radius:50%;width:40px;height:40px;font-size:24px;cursor:pointer}
 .overview .thumb{border-radius:4px}
+.overview .thumb[aria-current="page"]{border-color:var(--gold-hot);box-shadow:0 0 0 2px var(--gold-hot)}
+.overview .thumb:focus-visible{outline:3px solid var(--mint);outline-offset:4px}
+@media(max-width:720px){dialog.overview{padding:16px}.overview.open{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
 .overview .mini-slide .slide{padding:0!important}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-delay:0ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
@@ -1353,7 +1363,31 @@ SOFTWARE.
   const trigger=intro.querySelector('.join-trigger');
   const waiting=document.getElementById('waiting-intro'), template=document.getElementById('join-template');
   const params=new URLSearchParams(location.search);
-  if(params.get('present')!=='1'){
+  const presenter=params.get('present')==='1';
+  document.documentElement.classList.toggle('eda-presenter',presenter);
+  const poster=document.querySelector('.deck > .question-poster');
+  const footer=document.createElement('footer');
+  footer.className='deck-footer lecture-foot poster-controls';
+  const posterNav=intro.querySelector('.deck-nav').cloneNode(true);
+  posterNav.querySelector('[data-key="ArrowLeft"]').disabled=false;
+  footer.append(posterNav);
+  poster.querySelector('.poster-advance')?.remove();
+  poster.append(footer);
+  if(presenter){
+    for(const nav of document.querySelectorAll('.deck .deck-nav')){
+      const button=document.createElement('button');
+      button.type='button';
+      button.className='overview-trigger';
+      button.dataset.key='o';
+      button.title='分頁總覽（O）';
+      button.setAttribute('aria-haspopup','dialog');
+      button.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>總覽</span>';
+      nav.insertBefore(button,nav.querySelector('[data-key="ArrowLeft"]'));
+    }
+  }else{
+    document.querySelectorAll('.deck .notes,.deck .replay,.deck .deck-nav [data-key="s"]').forEach(el=>el.remove());
+  }
+  if(!presenter){
     // Keep the cropped photograph available to the existing reversible cover transition.
     intro.classList.add('brief-audience-view');
     intro.querySelectorAll('.lecture-head,.brief-intro,.brief-columns,.notes').forEach(el=>el.remove());
@@ -2705,7 +2739,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
   });
   document.addEventListener('keydown',e=>{
     if(e.altKey||e.metaKey||e.ctrlKey||document.querySelector('.overview.open'))return;
-    if(e.key.toLowerCase()==='d'){e.preventDefault();replay();}
+    if(document.documentElement.classList.contains('eda-presenter') && e.key.toLowerCase()==='d'){e.preventDefault();replay();}
   });
   reduced.addEventListener?.('change',()=>{transition?.clear();if(active)play(active,Math.min(origin,Date.now()));});
   sync();
@@ -2923,7 +2957,8 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
     /* ===== BroadcastChannel for presenter sync ===== */
     const CHANNEL_NAME = 'html-ppt-presenter-' + location.pathname;
     let bc;
-    try { bc = new BroadcastChannel(CHANNEL_NAME); } catch(e) { bc = null; }
+    const presenterMode = document.documentElement.classList.contains('eda-presenter');
+    try { bc = presenterMode ? new BroadcastChannel(CHANNEL_NAME) : null; } catch(e) { bc = null; }
 
     // Are we running inside the presenter popup? (legacy flag, now unused)
     const isPresenterWindow = false;
@@ -2940,7 +2975,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
 
     /* ===== notes overlay (N key) ===== */
     let notes = document.querySelector('.notes-overlay');
-    if (!notes) {
+    if (presenterMode && !notes) {
       notes = document.createElement('div');
       notes.className = 'notes-overlay';
       document.body.appendChild(notes);
@@ -2948,12 +2983,18 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
 
     /* ===== overview grid (O key) ===== */
     let overview = document.querySelector('.overview');
-    if (!overview) {
-      overview = document.createElement('div');
+    if (presenterMode && !overview) {
+      overview = document.createElement('dialog');
       overview.className = 'overview';
+      overview.setAttribute('aria-labelledby','overview-title');
+      overview.innerHTML = '<header class="overview-heading"><h2 id="overview-title">分頁總覽</h2><button type="button" aria-label="關閉總覽">×</button></header>';
+      overview.querySelector('button').onclick = () => toggleOverview(false);
+      overview.addEventListener('cancel', event => { event.preventDefault(); toggleOverview(false); });
       slides.forEach((s, i) => {
         const t = document.createElement('div');
         t.className = 'thumb';
+        t.tabIndex = 0;
+        t.setAttribute('role','button');
         // Force 16:9 aspect ratio robustly
         t.style.padding = '0 0 56.25% 0';
         t.style.height = '0';
@@ -2966,6 +3007,8 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
         // Create a container for the mini-slide
         const mini = document.createElement('div');
         mini.className = 'mini-slide';
+        mini.inert = true;
+        mini.setAttribute('aria-hidden','true');
         mini.style.position = 'absolute';
         mini.style.top = '0';
         mini.style.left = '0';
@@ -2998,7 +3041,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
         
         const n = document.createElement('div');
         n.className = 'n';
-        n.textContent = pages[i].number || '';
+        n.textContent = pages[i].number || (i === 0 ? '0' : '');
         n.style.position = 'absolute';
         n.style.top = '12px';
         n.style.left = '16px';
@@ -3023,7 +3066,14 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
         overlay.appendChild(text);
         t.appendChild(overlay);
 
-        t.addEventListener('click', () => { go(i); toggleOverview(false); });
+        t.addEventListener('click', () => { if(i !== idx) go(i); toggleOverview(false); });
+        t.addEventListener('keydown', event => {
+          if(event.key === 'Enter' || event.key === ' '){
+            event.preventDefault();
+            event.stopPropagation();
+            t.click();
+          }
+        });
         overview.appendChild(t);
       });
       document.body.appendChild(overview);
@@ -3062,7 +3112,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
 
       // notes (bottom overlay)
       const note = slides[n].querySelector(NOTE_SEL);
-      notes.innerHTML = note ? note.innerHTML : '';
+      if (notes) notes.innerHTML = note ? note.innerHTML : '';
 
       // hash
       const hashTarget = '#/' + page.key;
@@ -3114,22 +3164,30 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       };
     }
 
-    function toggleNotes(force){ notes.classList.toggle('open', force!==undefined?force:!notes.classList.contains('open')); }
+    function toggleNotes(force){ if (notes) notes.classList.toggle('open', force!==undefined?force:!notes.classList.contains('open')); }
     function toggleOverview(force){
-      const isOpen = force!==undefined ? force : !overview.classList.contains('open');
-      overview.classList.toggle('open', isOpen);
-      if (isOpen) {
-        requestAnimationFrame(() => {
-          const thumbs = overview.querySelectorAll('.thumb');
-          if (thumbs.length) {
-            const scale = thumbs[0].clientWidth / 1920;
-            overview.querySelectorAll('.mini-slide').forEach(m => {
-              m.style.transform = 'scale(' + scale + ')';
-            });
-          }
-        });
+      if(!overview) return;
+      const open = force ?? !overview.open;
+      if(open === overview.open) return;
+      if(open){
+        overview.showModal();
+        overview.classList.add('open');
+        const thumbs = overview.querySelectorAll('.thumb');
+        thumbs.forEach((thumb,i) => thumb.setAttribute('aria-current',i === idx ? 'page' : 'false'));
+        fitThumbnails();
+        thumbs[idx].focus();
+      }else{
+        overview.classList.remove('open');
+        overview.close();
+        slides[idx].querySelector('.overview-trigger')?.focus({preventScroll:true});
       }
     }
+    function fitThumbnails(){
+      if(!overview?.open) return;
+      const scale = overview.querySelector('.thumb').clientWidth / 1920;
+      for(const mini of overview.querySelectorAll('.mini-slide')) mini.style.transform = 'scale(' + scale + ')';
+    }
+    if(overview) window.addEventListener('resize',fitThumbnails);
 
     /* ========== PRESENTER MODE — Magnetic-card popup window ========== */
     /* Opens a new window with 4 draggable, resizable cards:
@@ -3161,11 +3219,12 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       }));
     }
     window.addEventListener('eda-language-change', () => {
-      notes.innerHTML = slides[idx].querySelector(NOTE_SEL)?.innerHTML || '';
+      if (notes) notes.innerHTML = slides[idx].querySelector(NOTE_SEL)?.innerHTML || '';
       if (presenterWin && !presenterWin.closed)
         presenterWin.postMessage({type:'eda-language',lang:window.edaLanguage.current,meta:presenterMeta()},'*');
     });
     function openPresenterWindow() {
+      if (!presenterMode) return;
       if (presenterWin && !presenterWin.closed) {
         presenterWin.focus();
         return;
@@ -3860,6 +3919,11 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
 
     document.addEventListener('keydown', function (e) {
       if (e.metaKey||e.ctrlKey||e.altKey) return;
+      if (overview?.open) {
+        if (e.key === 'Escape' || e.key.toLowerCase() === 'o') { e.preventDefault(); toggleOverview(false); }
+        return;
+      }
+      if (!presenterMode && !['ArrowRight','ArrowLeft','PageDown','PageUp',' ','Enter','Backspace','f','F'].includes(e.key)) return;
       if (e.target.closest && e.target.closest('button,a') && (e.key==='Enter'||e.key===' ')) return;
       switch (e.key) {
         case 'ArrowRight': case ' ': case 'PageDown': case 'Enter': go(idx+1); e.preventDefault(); break;
@@ -3965,6 +4029,10 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
   <p role="status"></p><div><button type="submit" data-copy="start"></button><button type="button" data-copy="cancel"></button></div>
 </form></dialog>
 <script id="eda-english" type="application/json">{
+  "總覽":"Overview",
+  "分頁總覽":"Slide overview",
+  "分頁總覽（O）":"Slide overview (O)",
+  "關閉總覽":"Close overview",
  "導師：Fan King Sang, Nelson": "Instructor: Fan King Sang, Nelson",
  "顯示同步 QR code": "Show join QR code",
  "課節概覽": "Lesson overview",
