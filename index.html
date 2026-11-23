@@ -1095,6 +1095,56 @@ body:has(.deck.forearm-turning) .progress-bar{visibility:hidden}
 }
 
 </style>
+<style id="eda-controls">
+#eda-tools{position:fixed;z-index:24;right:max(2%,calc((100vw - 177.77778vh)/2 + 2vh));top:max(1px,calc((100vh - 56.25vw)/2 + 1px));display:flex;align-items:center;gap:6px;color:#dddccf;font:500 clamp(10px,1.3vh,15px)/1.25 system-ui,sans-serif}
+#eda-tools[hidden],#eda-tools [hidden]{display:none}
+#eda-language,#eda-state,#eda-start{border:1px solid #435650;border-radius:20px;background:#102321;color:#dbe6dd}
+#eda-language{display:flex;padding:2px}
+#eda-tools button{font:inherit;cursor:pointer}
+#eda-language button{border:0;border-radius:16px;padding:2px 8px;background:transparent;color:#c6d1c9}
+#eda-language button[aria-pressed=true]{background:#eac295;color:#132421}
+#eda-start,#eda-state{padding:3px 8px}
+#eda-state:empty{display:none}
+#eda-login{max-width:min(360px,85vw);width:100%;margin:auto;border:1px solid #72877d;border-radius:14px;background:#132724;color:#f2f1e3;box-shadow:0 18px 80px #0008;padding:24px;font:16px/1.45 system-ui,sans-serif}
+#eda-login::backdrop{background:#041211ab}
+#eda-login form,#eda-login label{display:grid;gap:8px}
+#eda-login form{gap:14px}#eda-login h2{font-size:22px}#eda-login input{width:100%;font:inherit;padding:8px;border:1px solid #788f82;background:#09201e;color:#fff;border-radius:6px}
+#eda-login button{padding:7px 14px;margin-right:8px;cursor:pointer}
+#eda-login p:empty{display:none}
+@media (max-aspect-ratio: 1/1){#eda-tools{top:max(env(safe-area-inset-top),10px);right:10px;font-size:14px}#eda-language button{padding:6px 10px}}
+@media (max-height:500px) and (min-aspect-ratio:1/1){#eda-tools{right:2px;top:0;font-size:10px}#eda-language button,#eda-state,#eda-start{padding:1px 5px}}
+@media print{#eda-tools,#eda-login{display:none!important}}
+::view-transition-old(root){animation:eda-out .20s ease-in both}
+::view-transition-new(root){animation:eda-in .33s cubic-bezier(.2,.7,.3,1) both}
+@keyframes eda-out{to{opacity:0;transform:translateY(-4px)}}
+@keyframes eda-in{from{opacity:0;transform:translateY(6px)}}
+html:lang(en) .brief-intro h1{font-size:82px}
+html:lang(en) .brief-column-head{gap:20px}
+html:lang(en) .brief-column-head h2{font-size:40px}
+html:lang(en) .brief-column-head p{font-size:22px}
+html:lang(en) .brief-goals p,html:lang(en) .brief-risks p{font-size:29px;line-height:1.23}
+html:lang(en) .brief-list p br,html:lang(en) .brief-term i,html:lang(en) .cover-en,html:lang(en) .study-answer .term-en,html:lang(en) .specimen .serif-en{display:none}
+html:lang(en) .cover .hero-title{font-size:116px}
+html:lang(en) .poster-term{font-size:171px}
+html:lang(en) .poster-line{font-size:82px}
+html:lang(en) .poster-target{font-size:175px}
+html:lang(en) .study-copy .study-title{font-size:86px}
+html:lang(en) .study-copy .study-question{font-size:40px}
+html:lang(en) .practice .practice-title{font-size:65px}
+html:lang(en) .specimen .length{font-size:59px}
+html:lang(en) .gravity-explanation h3{font-size:43px}
+html:lang(en) .gravity-explanation p{font-size:32px}
+html:lang(en) .gravity-explanation .gravity-mode{font-size:46px}
+html:lang(en) .summary-page .page-heading h2{font-size:73px}
+html:lang(en) .heel-title{font-size:83px}
+html:lang(en) .heel-row{column-gap:10px}
+html:lang(en) .heel-result{gap:8px}
+html:lang(en) .heel-row .heel-action,html:lang(en) .heel-result strong{font-size:29px}
+html:lang(en) .heel-result small{font-size:23px}
+html:lang(en) .squat-page .line-instruction{font-size:30px}
+html:lang(en) .specimen .length{min-height:1.32em}
+html:lang(en) .specimen:last-child .length{font-size:47px;min-height:1.66em}
+</style>
 </head>
 
 <body class="tpl-presenter-mode-reveal"><div class="deck" data-w="1920" data-h="1080" aria-label="肌肉的三種收縮">
@@ -2413,11 +2463,12 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
     const beat=Math.min(7,Math.floor(time*7)+1);
     const phase=beat<=2?'lift':beat<=4?'hold':'lower';
     const countdown=Math.max(1,Math.ceil((1-r)*returnMs/1000));
-    const tag=isReturn?'reset'+countdown:phase+beat;
+    const tag=(window.edaLanguage?.current || 'zh')+(isReturn?'reset'+countdown:phase+beat);
     if(tag===meter.last)return;
     meter.last=tag;
-    meter.word.textContent=isReturn?'下一輪預備':{lift:'提起',hold:'停住',lower:'慢放'}[phase];
-    meter.readout.textContent=isReturn?countdown+' 秒':beat+' / 7';
+    const word=isReturn?'下一輪預備':{lift:'提起',hold:'停住',lower:'慢放'}[phase];
+    meter.word.textContent=window.edaLanguage?.text(word) ?? word;
+    meter.readout.textContent=isReturn?countdown+(window.edaLanguage?.current==='en'?' s':' 秒'):beat+' / 7';
     meter.rows.forEach(el=>el.classList.toggle('sounding',!isReturn&&el.dataset.part===phase));
     meter.bars.forEach((el,i)=>el.classList.toggle('lit',!isReturn&&i<beat));
   }
@@ -2903,7 +2954,19 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
     }
 
     /* ===== navigation ===== */
-    function go(n, fromRemote){
+    const syncNav = window.edaDeck = {
+      current: () => idx,
+      valid: n => Number.isInteger(n) && n >= 0 && n < total,
+      follow: n => { if (syncNav.valid(n) && n !== idx) go(n,true,true); },
+      allow: () => true
+    };
+    function go(n, fromRemote, following = false){
+      if (!following && !syncNav.allow()) {
+        history.replaceState(null,'','#/' + pages[idx].key);
+        if (presenterWin && !presenterWin.closed) presenterWin.postMessage({type:'lesson-page',idx},'*');
+        return;
+      }
+      const previous = idx;
       n = Math.max(0, Math.min(total-1, n));
       slides.forEach((s,i) => {
         s.classList.toggle('is-active', i===n);
@@ -2955,6 +3018,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       });
 
       // Broadcast to other window (audience ↔ presenter)
+      if (!following && previous !== n) window.dispatchEvent(new Event('eda-page-change'));
       if (!fromRemote && bc) bc.postMessage({type:'go',idx:n});
       if(presenterWin && !presenterWin.closed) presenterWin.postMessage({type:'lesson-page',idx:n},'*');
     }
@@ -2964,7 +3028,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       bc.onmessage = function(e) {
         if (!e.data) return;
         if (e.data.type === 'go' && typeof e.data.idx === 'number') {
-          go(e.data.idx, true);
+          if (syncNav.acceptBroadcast?.() !== false) go(e.data.idx, true);
         } else if (e.data.type === 'theme' && e.data.name) {
           /* Sync theme across windows */
           const i = themes.indexOf(e.data.name);
@@ -3014,6 +3078,17 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       if(e.data.type==='lesson-clock-request') sendLessonClock();
     });
 
+    function presenterMeta() {
+      return slides.map((slide,i) => ({
+        key:pages[i].key, label:pages[i].number ? pages[i].label : slide.dataset.title,
+        title:slide.dataset.title || pages[i].label, notes:slide.querySelector(NOTE_SEL)?.innerHTML || ''
+      }));
+    }
+    window.addEventListener('eda-language-change', () => {
+      notes.innerHTML = slides[idx].querySelector(NOTE_SEL)?.innerHTML || '';
+      if (presenterWin && !presenterWin.closed)
+        presenterWin.postMessage({type:'eda-language',lang:window.edaLanguage.current,meta:presenterMeta()},'*');
+    });
     function openPresenterWindow() {
       if (presenterWin && !presenterWin.closed) {
         presenterWin.focus();
@@ -3024,16 +3099,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       const deckUrl = location.protocol + '//' + location.host + location.pathname;
 
       // Collect slide titles + notes (HTML strings)
-      const slideMeta = slides.map((s, i) => {
-        const note = s.querySelector(NOTE_SEL);
-        return {
-          key: pages[i].key,
-          label: pages[i].label,
-          title: s.getAttribute('data-title') ||
-            (s.querySelector('h1,h2,h3')||{}).textContent || pages[i].label,
-          notes: note ? note.innerHTML : ''
-        };
-      });
+      const slideMeta = presenterMeta();
 
       /* Capture current theme so presenter previews match the audience */
       const currentTheme = root.getAttribute('data-theme') || (themes[themeIdx] || '');
@@ -3041,12 +3107,13 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
 
       presenterWin = window.open('', 'html-ppt-presenter', 'width=1280,height=820,menubar=no,toolbar=no');
       if (!presenterWin) {
-        alert('請允許瀏覽器彈出講者視窗');
+        alert(window.edaLanguage.text('請允許瀏覽器彈出講者視窗'));
         return;
       }
       presenterWin.document.open();
       presenterWin.document.write(presenterHTML);
       presenterWin.document.close();
+      presenterWin.postMessage({type:'eda-language',lang:window.edaLanguage.current,meta:slideMeta},'*');
     }
 
     function buildPresenterHTML(deckUrl, slideMeta, total, startIdx, channelName, currentTheme) {
@@ -3486,12 +3553,21 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
   var iframeReady = { cur: false, nxt: false };
   var currentTheme = ${themeJSON};
   var audienceClock=null;
+  var popupLabels = ['.pcard-head','.timer-row .label','.timer-controls','.hint-bar'].flatMap(function(sel){
+    return Array.from(document.querySelectorAll(sel)).flatMap(el=>window.opener?.edaLanguage?.capture(el) || []);
+  });
   function syncCurrentMotion(){
     if(audienceClock && audienceClock.idx===idx && iframeReady.cur)
       iframeCur.contentWindow.postMessage({type:'lesson-sync-clock',idx:idx,epoch:audienceClock.epoch},'*');
   }
   window.addEventListener('message',function(e){
     if(e.source !== window.opener || !e.data) return;
+    if(e.data.type==='eda-language'){
+      slideMeta=e.data.meta;document.documentElement.lang=e.data.lang;
+      popupLabels.forEach(write=>write(e.data.lang));
+      [iframeCur,iframeNxt].forEach(f=>f.contentWindow.postMessage({type:'eda-local-language',lang:e.data.lang},'*'));
+      update(idx);
+    }
     if(e.data.type==='lesson-page' && Number.isInteger(e.data.idx) && e.data.idx!==idx) update(e.data.idx);
     if(e.data.type==='lesson-clock'){audienceClock=e.data;syncCurrentMotion();}
   });
@@ -3551,7 +3627,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       if (body && !body.querySelector('.preview-end')) {
         var end = document.createElement('div');
         end.className = 'preview-end';
-        end.textContent = '簡報完結';
+        end.textContent = window.opener?.edaLanguage?.text('簡報完結') || '簡報完結';
         body.appendChild(end);
       }
       nxtMeta.textContent = 'END';
@@ -3579,7 +3655,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
   if (bc) {
     bc.onmessage = function(e){
       if (!e.data) return;
-      if (e.data.type === 'go') update(e.data.idx);
+      if (e.data.type === 'go') { if(window.opener?.edaDeck?.acceptBroadcast?.() !== false) update(e.data.idx); }
       else if (e.data.type === 'theme' && e.data.name) {
         currentTheme = e.data.name;
         /* Forward theme change to preview iframes */
@@ -3602,7 +3678,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
   document.getElementById('btn-next').addEventListener('click', function(){ go(idx + 1); });
   document.getElementById('btn-reset').addEventListener('click', resetTimer);
   document.getElementById('reset-layout').addEventListener('click', function(){
-    if (confirm('還原預設版面？')) {
+    if (confirm(window.opener?.edaLanguage?.text('還原預設版面？') || '還原預設版面？')) {
       try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
       applyLayout(defaultLayout());
     }
@@ -3797,4 +3873,407 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
 })();
 
 </script>
+
+<div id="eda-tools" hidden data-no-swipe>
+  <span id="eda-state" role="status" aria-live="polite"></span>
+  <button type="button" id="eda-start" hidden></button>
+  <div id="eda-language" role="group" aria-label="語言 / Language">
+    <button type="button" value="zh" lang="zh-HK" aria-pressed="true">中文</button><button type="button" value="en" lang="en" aria-pressed="false">English</button>
+  </div>
+</div>
+<dialog id="eda-login" aria-labelledby="eda-login-title"><form>
+  <h2 id="eda-login-title" data-copy="login"></h2>
+  <label><span data-copy="email"></span><input type="email" name="email" autocomplete="username" required></label>
+  <label><span data-copy="password"></span><input type="password" name="password" autocomplete="current-password" required></label>
+  <p role="status"></p><div><button type="submit" data-copy="start"></button><button type="button" data-copy="cancel"></button></div>
+</form></dialog>
+<script id="eda-english" type="application/json">{
+ "課節概覽": "Lesson overview",
+ "微格教學　／　課節概覽": "Microteaching / Lesson overview",
+ "肌肉的": "Three types of ",
+ "三種收縮": "muscle contraction",
+ "教學對象": "Class",
+ "中四及中五學生，具備基礎運動知識。": "Form 4 and 5 students with basic knowledge of exercise.",
+ "學習目標": "Learning objectives",
+ "完成本課後，學生能夠": "By the end of this lesson, students can",
+ "解釋": "Explain ",
+ "向心收縮": "Concentric",
+ "離心收縮": "Eccentric",
+ "及": " and ",
+ "等長收縮": "Isometric",
+ "的基本概念。": " muscle contractions.",
+ "透過觀察肌肉在動作中縮短、變長或長度大致不變，": "From whether a working muscle shortens, lengthens or stays the same length, ",
+ "辨識": "identify ",
+ "三種肌肉收縮模式。": "the three types of contraction.",
+ "運用上述概念": "Use these concepts to ",
+ "分析": "analyse ",
+ "一個簡單動作情境，": "a simple movement ",
+ "並": "and ",
+ "說明": "explain ",
+ "判斷肌肉收縮模式的理由。": "how they identified the contraction.",
+ "預計學習難點": "Anticipated difficulties",
+ "應用於陌生動作": "Applying ideas to unfamiliar movements",
+ "遇到陌生動作時，學生或難以": "Students may find it hard to use changes in muscle length ",
+ "根據肌肉長度變化判斷收縮模式。": "to identify a contraction in a new movement.",
+ "連繫體驗與概念": "Linking experience to terminology",
+ "非自願選修的學生若較少投入實作，": "Students who did not choose this subject may participate less ",
+ "或難以將出力感受連繫到術語。": "and struggle to connect what they feel with the terms.",
+ "理解收縮的意思": "Understanding contraction",
+ "學生容易把收縮理解為縮短，": "Students may equate contraction with shortening ",
+ "難以理解肌肉出力時也可以拉長。": "and struggle to see how an active muscle can lengthen.",
+ "10 分鐘微格教學": "10-minute microteaching lesson",
+ "簡報操作": "Presentation controls",
+ "講者視窗（S）": "Presenter window (S)",
+ "全螢幕（F）": "Full screen (F)",
+ "上一個畫面（←）": "Previous screen (←)",
+ "下一個畫面（→）": "Next screen (→)",
+ "今堂嘅對象係有基礎運動知識嘅中四同中五學生。我會先用二頭彎舉，等同學試吓肌肉出力嗰陣，長度可以點樣變。之後做深蹲同坐姿提踵，請佢哋講出判斷嘅理由，睇吓換咗動作，仲識唔識用同一個方法分析。": "This class is for Form 4 and 5 students with basic exercise knowledge. Start with a biceps curl so they can feel a muscle working and observe how its length changes. Then ask them to explain their reasoning in a squat and a seated heel raise. Can they use the same method when the movement changes?",
+ "封面｜肌肉的三種收縮": "Cover | Three types of muscle contraction",
+ "側光照在彎舉啞鈴的手臂上。": "Side lighting on an arm curling a dumbbell.",
+ "PVE　／　微格教學": "PVE / Microteaching",
+ "運動科學": "Exercise science",
+ "0:00–0:15　｜　介紹課題": "0:00–0:15 | Introduce the topic",
+ "「今日我哋會用自己隻手試一次彎舉，再將同一個判斷方法用喺深蹲同坐姿提踵。十分鐘之後，你可以講得出邊塊肌肉出緊力，同埋佢嘅長度點樣變。」同學可空手跟做，我用一支輕水樽或小啞鈴示範。": "“Today we’ll try a curl with our own arms, then use the same method to analyse a squat and a seated heel raise. In ten minutes you’ll be able to name the working muscle and describe how its length changes.” Students can follow without a weight. Demonstrate with a light water bottle or a small dumbbell.",
+ "翻到下一頁，讓大家先睇問題。": "Advance and give everyone time to read the question.",
+ "開場投票｜「向心」是指向心臟嗎？": "Opening vote | Does concentric mean towards the heart?",
+ "「向心」是指向心臟嗎？": "Does “concentric” mean towards the heart?",
+ "「": "“",
+ "向": "Con",
+ "心": "centric",
+ "」": "”",
+ "是指向": "Does it mean towards the ",
+ "臟": "rt",
+ "嗎？": "?",
+ "下一個畫面": "Next screen",
+ "0:15–1:00　｜　先投票，暫時保留答案": "0:15–1:00 | Vote before revealing the answer",
+ "讓大家靜靜睇五秒，再問：「你第一次聽到『向心收縮』，會唔會以為塊肌肉向住心臟收？覺得係嘅舉手，唔肯定嘅都可以估。」": "Give the class five seconds to read. Ask, “The Chinese term for concentric contraction contains the character for ‘heart’. When you first heard it, did you think the muscle contracted towards the heart? Raise a hand if you did. It’s fine to guess.”",
+ "請一位同學講下點解，暫時保留答案。「一陣用自己隻手試，睇吓邊樣嘢幫我哋判斷。」請大家掌心向上，另一隻手輕觸上臂前面，再翻頁。": "Invite a student to explain their thinking and hold the answer. “Let’s use our arms to find out what to look for.” Ask students to turn one palm up and touch the front of that upper arm with their other hand, then advance.",
+ "提起｜預測": "Lift | Predict",
+ "二頭彎舉　／　肱二頭肌": "Biceps curl / Biceps brachii",
+ "動作一 · 觀察": "Movement 1 · Observe",
+ "掌心向上，": "Palm up,",
+ "提起前臂": "lift your forearm",
+ "保持上臂貼身，用另一隻手": "Keep your upper arm at your side. ",
+ "輕觸上臂前側的肱二頭肌。": "Feel your biceps with your other hand.",
+ "肌肉出力時，長度怎樣變？": "How does an active muscle’s length change?",
+ "重播動作（D）": "Replay movement (D)",
+ "重播動作": "Replay",
+ "二頭彎舉 · 提起": "Biceps curl · Lift",
+ "1:00–1:45　｜　先做動作，再預測": "1:00–1:45 | Move, then predict",
+ "「手肘放近身體，掌心向上，手臂垂低少少。依家慢慢屈手肘，將手掌向肩膊方向帶。」自己側身做一次，讓全班睇清楚手肘係轉動中心。「金色嗰段跟住做，見到青色虛影就等下一輪。」": "“Keep your elbow close to your side, palm up, and lower your arm a little. Now slowly bend your elbow and bring your palm towards your shoulder.” Demonstrate side-on so everyone can see the pivot at the elbow. “Follow the gold movement. When you see the teal afterimage, wait for the next round.”",
+ "「另一隻手摸住上臂前面，呢度就係肱二頭肌。你摸到佢實咗。望住金色嗰部分，佢": "“Touch the front of your upper arm. That’s your biceps. Feel it firm up. Watch the gold section. Does it ",
+ "變短、變長，定係長度差唔多": "shorten, lengthen or stay about the same length",
+ "？」收一兩個答案。觸感幫手搵肌肉，長度變化就用動作同示意圖一齊判斷。": "?” Take one or two answers. Touch helps locate the muscle. Use the movement and diagram together to judge its change in length.",
+ "等同學答咗，先按右鍵揭曉。": "Wait for predictions, then press the right arrow to reveal the answer.",
+ "提起｜向心收縮": "Lift | Concentric contraction",
+ "動作一 · 提起": "Movement 1 · Lift",
+ "提起前臂時，肱二頭肌出力，": "As you lift your forearm, your biceps ",
+ "長度": "work and ",
+ "變短": "shorten",
+ "。": ".",
+ "肌肉長度示意": "Muscle length",
+ "向心收縮的長度變化": "Length change during a concentric contraction",
+ "1:45–2:30　｜　向心收縮": "1:45–2:30 | Concentric contraction",
+ "「啱，提起嗰陣，肱二頭肌出力，同時": "“Yes. As you lift, your biceps work and ",
+ "。呢種叫向心收縮，英文係 Concentric。」沿住長度示意嘅兩端比一比，請全班讀一次中文或英文名稱。": ". This is a concentric contraction.” Compare the two ends on the length diagram. Ask the class to say the Chinese or English term together.",
+ "「返到頭先個問題，答案係": "“Back to our opening question. The answer is ",
+ "唔係": "no",
+ "。『向心』講緊嘅係發力嗰塊肌肉縮短咗，同心臟喺邊度冇關係。」請一位同學用「出力、變短」解釋畀隔籬聽。": ". Concentric describes the working muscle getting shorter. The position of the heart is irrelevant.” Ask a student to explain to a partner using the words “working” and “shortening”.",
+ "「隻手依家舉起咗。如果慢慢放低，又會點？」": "“Your arm is raised now. What happens if you lower it slowly?”",
+ "慢放｜預測": "Lower | Predict",
+ "動作二 · 觀察": "Movement 2 · Observe",
+ "用三拍，": "Take three beats.",
+ "慢慢放低": "Lower slowly",
+ "從屈肘開始，控制前臂下降。": "Start with your elbow bent and control the descent.",
+ "試着讓每一拍都一樣慢。": "Keep the same slow pace on every beat.",
+ "手臂向下，肱二頭肌": "As your arm lowers, ",
+ "還在出力嗎？": "are your biceps still working?",
+ "二頭彎舉 · 慢放": "Biceps curl · Lower",
+ "2:30–3:00　｜　先做動作，再預測": "2:30–3:00 | Move, then predict",
+ "「將前臂舉返起，準備。一、二、三，慢慢放低。摸住二頭肌，試下令成個過程一樣慢。」示範時保持上臂貼身，特別留意同學有冇一嘢放低隻手。": "“Raise your forearm again. Ready? One, two, three. Lower it slowly. Feel your biceps and keep the pace even.” Keep the upper arm at your side as you demonstrate. Watch for students dropping their forearm.",
+ "「如果二頭肌完全放鬆，個重量仲會唔會慢慢落？你用緊力去控制佢嘅速度，咁佢嘅長度又點樣變？」等五秒，請同學先講觀察到嘅動作，再估塊肌肉係變長定變短。": "“If your biceps relaxed completely, would the weight still lower slowly? You’re working to control its speed. What happens to the length of the muscle?” Wait five seconds. Ask students to describe the movement before predicting whether the muscle lengthens or shortens.",
+ "收到預測後揭曉。": "Reveal the answer after the predictions.",
+ "慢放｜離心收縮": "Lower | Eccentric contraction",
+ "動作二 · 慢放": "Movement 2 · Lower",
+ "控制前臂下降時，肱二頭肌": "As you control the descent, ",
+ "仍然出力，同時": "your biceps work and ",
+ "變長": "lengthen",
+ "離心收縮的長度變化": "Length change during an eccentric contraction",
+ "3:00–3:30　｜　離心收縮": "3:00–3:30 | Eccentric contraction",
+ "「當重力將前臂往下帶，肱二頭肌仲出緊力，幫你控制速度。呢個時候佢": "“Gravity pulls the forearm down. Your biceps are still working to control the speed. They ",
+ "，所以叫離心收縮，Eccentric。」用手指由光帶兩端向外指。": ", so this is an eccentric contraction.” Trace outwards from the two ends of the light band.",
+ "「頭先有同學話，感覺到自己仲用緊力。呢個觀察啱。收縮可以喺肌肉變長嘅時候發生。」可以按 D 重播一次下降，請同學一路望住手肘，一路講出「出力、變長」。": "“Some of you could feel the effort. Good observation. A contraction can happen while the muscle lengthens.” Press D to replay the descent. Ask students to watch the elbow and say “working and lengthening”.",
+ "「如果停喺中間，令佢郁都唔郁呢？」": "“What if you stop halfway and keep your forearm still?”",
+ "停住｜預測": "Hold | Predict",
+ "動作三 · 觀察": "Movement 3 · Observe",
+ "前臂打橫，": "Forearm level.",
+ "停住兩秒": "Hold for two seconds",
+ "保持掌心向上，肘角固定。": "Keep your palm up and your elbow angle fixed.",
+ "感受手上托着的重量。": "Feel the weight in your hand.",
+ "動作停下來，": "The movement stops. ",
+ "肱二頭肌還在出力嗎？": "Are your biceps still working?",
+ "二頭彎舉 · 停住": "Biceps curl · Hold",
+ "3:30–4:00　｜　先做動作，再預測": "3:30–4:00 | Move, then predict",
+ "「將前臂放到打橫，唔好郁。一、二。用手托住個重量嗰陣，二頭肌仲有冇出力？如果你一放鬆，隻手會點？」請大家試完就放低手休息。": "“Bring your forearm level and hold it still. One, two. Are your biceps working as you support the weight? What would happen if you relaxed?” Let students lower and rest their arms after trying.",
+ "「手肘角度保持住。如果肌肉繼續出力，你估佢而家嘅長度係點？」先請全班用手指比出兩端嘅距離，再請一位同學講出判斷。呢頁嘅模型會停喺同一角度，留時間畀同學觀察。": "“The elbow angle stays the same. If the muscle is working, what do you think happens to its length?” Ask everyone to show the distance between the two ends with their fingers. Invite one student to explain. The model holds the same angle so the class has time to observe.",
+ "等大家答完，再揭示名稱。": "Let everyone answer before revealing the term.",
+ "停住｜等長收縮": "Hold | Isometric contraction",
+ "動作三 · 停住": "Movement 3 · Hold",
+ "托住重量、保持肘角時，": "With the weight held still, ",
+ "肱二頭肌出力，長度": "your active biceps stay ",
+ "大致不變": "about the same length",
+ "等長收縮的長度變化": "Length change during an isometric contraction",
+ "4:00–4:30　｜　等長收縮": "4:00–4:30 | Isometric contraction",
+ "「隻手托住重量，肱二頭肌持續出力，手肘角度冇改變，成塊肌肉嘅長度": "“Your hand supports the weight. The biceps keep working and the elbow angle stays fixed. The muscle stays ",
+ "。呢個就係等長收縮，Isometric。」指住光帶兩端嘅標記：「你見到金色肌腹微微彈動，代表佢持續出力。望住兩個端點，距離一直一樣。」": ". This is an isometric contraction.” Point to the ends of the light band. “The gentle pulse shows continuing effort. Watch the endpoints. The distance stays the same.”",
+ "「邊位可以用一句話解釋，點解停住都算收縮？」等學生講出保持姿勢仍需要出力，再請佢示範兩秒。全班放鬆手臂，準備把三個階段連埋一齊。": "“Who can explain in one sentence why holding still counts as a contraction?” Listen for the effort needed to maintain posture. Invite the student to demonstrate for two seconds. Relax your arms before joining the phases together.",
+ "下一段用七拍完成一次完整彎舉。": "Next, complete one curl in seven beats.",
+ "教學參考": "Teaching reference",
+ "OpenStax《Anatomy and Physiology 2e》§10.4，圖 10.13": "OpenStax, Anatomy and Physiology 2e, §10.4, Figure 10.13",
+ "練習｜上、停、落": "Practice | Lift, hold, lower",
+ "二人練習　／　二頭彎舉": "Partner practice / Biceps curl",
+ "全班跟做": "Follow together",
+ "七拍做一次彎舉": "One curl in seven beats",
+ "一人做動作，一人說出每段的收縮名稱，再交換。": "One partner moves. The other names each contraction. Then swap roles.",
+ "上": "Lift",
+ "2 拍": "2 beats",
+ "停": "Hold",
+ "落": "Lower",
+ "3 拍": "3 beats",
+ "由第一拍重播（D）": "Replay from beat one (D)",
+ "由第一拍重播": "Replay from beat one",
+ "預備": "Ready",
+ "動作練習": "Movement practice",
+ "4:30–6:00　｜　全班七拍，再二人互教": "4:30–6:00 | Seven beats, then coach a partner",
+ "先請大家放下重物，空手掌心向上。「兩個人一組。每拍約一秒半。頭兩拍由低處提至前臂打橫，中間兩拍保持肘角，留意金色肌腹輕輕彈動。最後三拍慢慢放低。見到青色虛影就休息兩秒，跟住下一輪第一拍一齊開始。」畫面會自動循環，撳": "Put the weights down and turn your palms up. “Work in pairs. Allow about one and a half seconds per beat. Lift to horizontal over the first two beats. Hold the elbow angle for two beats and watch the gold muscle belly pulse. Lower over the final three beats. Rest for two seconds during the teal afterimage, then start again on beat one.” The animation loops. Press ",
+ "可以隨時帶大家由第一拍開始。": " to restart everyone on the first beat.",
+ "「依家一位同學做，拍檔見到一個動作，就講收縮名同長度變化。做完交換。」有需要可再撳 D。留約四十秒畀兩位同學都試一次，巡視慢放時有冇人答錯。": "“One partner moves. The other names the contraction and describes the length change in each phase. Then swap.” Press D again if needed. Allow about forty seconds for both partners to try. Listen for errors during the lowering phase.",
+ "請一組示範並說出「向心、等長、離心」。下一題改睇大腿。": "Invite a pair to demonstrate and say “concentric, isometric, eccentric”. Next, turn to the thigh.",
+ "深蹲｜配對": "Squat | Match the phases",
+ "動作遷移　／　深蹲": "Movement transfer / Squat",
+ "二人推理": "Reason with a partner",
+ "深蹲時，大腿前側怎樣出力？": "What do your quads do in a squat?",
+ "觀察大腿前側的股四頭肌。和身旁同學為三個階段配對，並說明理由。": "Match the three phases to contractions of the front thigh muscles. Explain your choices to a partner.",
+ "慢慢蹲下": "Lower slowly",
+ "身體下降，大腿前側控制屈膝速度。": "As the body lowers, the front of the thigh controls knee flexion.",
+ "哪一種收縮？": "Which contraction?",
+ "停在半蹲": "Hold a half-squat",
+ "維持半蹲，膝角固定。": "Hold a half-squat with a fixed knee angle.",
+ "站起來": "Stand up",
+ "站起時伸膝。": "The knee extends as you stand.",
+ "股四頭肌（大腿前側）": "Quadriceps (front of thigh)",
+ "深蹲 · 應用": "Squat · Apply",
+ "6:00–6:55　｜　先示範，再讓同伴討論": "6:00–6:55 | Demonstrate, then discuss in pairs",
+ "「今次轉去大腿。手指指住大腿前面，呢組叫": "“Now point to the front of your thigh. This group is called the ",
+ "股四頭肌": "quadriceps",
+ "。睇我慢慢蹲低少少、停兩秒，再企返起身。大家可以原地輕輕試，或者坐住觀察我。」": ". Watch me lower a little, hold for two seconds and stand. Try a shallow squat or stay seated and watch.”",
+ "「同拍檔逐格配對。喺每一格，前面呢組肌肉係點樣出力？用『變長、變短、大致不變』解釋你嘅選擇。」留約二十秒討論，再請一組講一次；其他同學可以提出唔同意見。": "“Match each picture with your partner. What are the muscles at the front doing? Use ‘lengthening’, ‘shortening’ or ‘about the same length’ to explain.” Give pairs about twenty seconds. Invite a pair to explain and let others offer a different view.",
+ "若有人覺得向下即係放鬆，追問「邊個幫你控制落去嘅速度？」聽完答案先揭曉。": "If someone thinks moving down means relaxing, ask “What controls your speed on the way down?” Listen before revealing the answers.",
+ "深蹲｜核對": "Squat | Check",
+ "核對判斷": "Check your reasoning",
+ "深蹲的三個階段": "Three phases of a squat",
+ "蹲下時控制屈膝，停住時維持膝角，站起時伸膝。": "Control knee flexion as you lower, hold the knee angle still, then extend the knee to stand.",
+ "·　變長": "· lengthens",
+ "·　大致不變": "· steady length",
+ "·　變短": "· shortens",
+ "6:55–7:30　｜　比較屈膝、維持與伸膝": "6:55–7:30 | Compare bending, holding and straightening",
+ "「慢慢蹲低時，膝頭屈曲，大腿前面嘅肌肉出力控制下降，同時": "“As you lower slowly, the knees bend. The front thigh muscles work to control the descent and ",
+ "變長，係離心": "lengthen: eccentric",
+ "。中間停喺半蹲位置，膝角固定。金色肌腹輕輕彈動，表示仲出緊力，兩端距離大致不變，係": ". In a half-squat, the knee angle stays fixed. The gold muscle belly pulses to show continued effort. Its length stays about the same: ",
+ "等長": "Isometric",
+ "。企起身時伸膝，肌肉出力變短，係": ". As you stand, the knees straighten and the muscles work and shorten: ",
+ "向心": "Concentric",
+ "。」": ".”",
+ "「同二頭彎舉一樣，要先指明邊塊肌肉出力。邊位可以揀一格，用自己說話講個理由？」留約十秒畀一位同學回應。": "“As with the curl, name the working muscle first. Who can pick one picture and explain it in their own words?” Allow about ten seconds for a response.",
+ "講者提示：深蹲涉及多組肌肉。此處以股四頭肌中只跨膝關節的廣肌作長度例子。圖中的光帶是定性示意。": "Presenter note: A squat recruits several muscle groups. The vasti of the quadriceps cross only the knee and illustrate the length changes here. The light band is qualitative.",
+ "University of Kentucky，股四頭肌在深蹲兩個動作階段的肌電研究": "University of Kentucky study of quadriceps EMG in the two phases of a squat",
+ "黃金法則｜用重力方向判斷": "Golden rule | Use gravity as a clue",
+ "動作分析　／　重力與肌肉": "Movement analysis / Gravity and muscle",
+ "黃金法則　／　以深蹲的大腿前側為例": "Golden rule / The front thigh in a squat",
+ "先看重力，再看肌肉": "Look at gravity, then at the muscle",
+ "重力向下。先看身體或啞鈴往哪邊移動，再看出力的肌肉是變短還是變長。": "Gravity pulls down. Which way does the body or weight move? Does the working muscle shorten or lengthen?",
+ "慢慢蹲下時，身體和重力都向下，股四頭肌出力控制下降。": "As the body lowers with gravity, the quadriceps control the descent.",
+ "身體": "Body",
+ "重力": "Gravity",
+ "身體順着重力下降。": "Your body moves with gravity.",
+ "股四頭肌出力時": "Your active quads ",
+ "控制下降速度。": "to control the descent.",
+ "由半蹲站起來，身體向上移動，重力仍然向下。": "As you rise from a half-squat, your body moves up and gravity still pulls down.",
+ "從半蹲站起": "Rise from a half-squat",
+ "身體向上，克服重力。": "Your body rises against gravity.",
+ "股四頭肌出力": "Your quads ",
+ "讓膝關節伸直。": "to straighten the knees.",
+ "坐着試一試": "Try it seated",
+ "腳跟慢慢放下時，哪塊肌肉在控制速度？": "Which muscle controls the speed as you lower your heels?",
+ "重力與肌肉 · 判斷方法": "Gravity and muscle · Reasoning",
+ "7:30–8:00　｜　用重力方向作線索": "7:30–8:00 | Use gravity as a clue",
+ "指住兩枝「重力」箭嘴：「就算我企高咗，重力一直向邊？」等同學指向地面。「依家試吓用三拍慢慢蹲低。個人落緊去，大腿前面仲出緊力控制速度，變長，所以係離心。再企返起身，同一組肌肉出力縮短，係向心。」": "Point to the gravity arrows. “Even when I stand taller, which way does gravity pull?” Wait for students to point down. “Lower slowly over three beats. Your body goes down but your front thigh muscles work to control the speed. They lengthen: eccentric. Stand again. The same muscles shorten as they work: concentric.”",
+ "「坐返低，想像腳踭慢慢落地。今次輪到邊塊肌肉控制？下一頁用自己雙腳試。」先讓學生預測，提踵答案留待快測後揭曉。": "“Sit down and imagine slowly lowering your heels. Which muscle controls this movement?” Invite predictions. Save the answers for the heel-raise vote.",
+ "這條線索適用於以重力為主要阻力的徒手或自由重量動作。判斷時只追蹤負責該動作的特定肌肉。深蹲以控制膝關節的大腿前側廣肌為例。停在半蹲時，肌肉仍出力，長度大致不變。": "Use this clue for bodyweight or free-weight movements in which gravity is the main resistance. Track one working muscle at a time. Here we use the vasti, which control the knee. In a held half-squat, they work at approximately constant length.",
+ "OpenStax《Anatomy and Physiology 2e》10.4，肌肉張力與收縮類型": "OpenStax, Anatomy and Physiology 2e, §10.4, muscle tension and types of contraction",
+ "坐姿提踵｜全班快測": "Seated heel raise | Class vote",
+ "生活應用　／　小腿後側": "Everyday movement / Back of the calf",
+ "全班跟做 · 手勢快測": "Move together · Vote with your fingers",
+ "坐姿": "Seated ",
+ "提踵": "heel raise",
+ "雙腳平放，前腳掌貼地。": "Start with feet flat. Keep the balls of your feet down.",
+ "提起腳跟": "Raise your heels",
+ "慢慢放下": "Lower slowly",
+ "小腿後側的肌肉怎樣出力？": "How do your calf muscles work?",
+ "每做完一段，舉手指作答。": "Vote with your fingers after each phase.",
+ "離心": "Eccentric",
+ "坐姿提踵 · 學習檢核": "Seated heel raise · Check",
+ "8:00–8:35　｜　全班坐着跟做，兩次手勢投票": "8:00–8:35 | Stay seated and vote twice",
+ "「大家留喺座位，雙腳先平放地下。前腳掌一直貼地。跟金色動作，兩邊腳踭一齊提起，再慢慢放低。腳踭返到地下，就跟住下一輪再提起。」側身示範一次，請大家先望腳掌邊一部分冇郁，再留意右邊放大圖。上端對齊，睇下金色肌腹嘅下端去到邊。": "“Stay seated and start with both feet flat. Keep the balls of your feet on the floor. Follow the gold movement. Lift both heels and lower slowly. When they touch down, start the next round.” Demonstrate side-on. Ask students to identify the part of the foot that stays still, then look at the magnified diagram. The upper end is aligned. Where does the lower end of the gold muscle belly go?",
+ "「今次睇小腿後面。A，提起腳踭。出緊力嗰塊肌肉係咩收縮？一隻手指向心，兩隻離心，三隻等長。諗好一齊舉。B，依家慢慢放低腳踭，再投一次。」": "“Watch the back of your calves. A: raise your heels. Which contraction is the working muscle making? One finger for concentric, two for eccentric, three for isometric. Think, then vote together. B: slowly lower your heels and vote again.”",
+ "揀一位同學，請佢講慢慢放低嗰陣，小腿後面塊肌肉嘅長度點變。等大家投完先揭曉。": "Ask one student to describe the length change at the back of the calf as the heels lower. Wait for everyone to vote before revealing.",
+ "坐姿提踵｜核對答案": "Seated heel raise | Check",
+ "核對答案": "Check your answers",
+ "出力變短": "Works and shortens",
+ "出力變長": "Works and lengthens",
+ "留意小腿後側的比目魚肌。": "Focus on the soleus at the back of the calf.",
+ "慢慢放下腳跟時，它仍然出力。": "It keeps working as your heels lower slowly.",
+ "8:35–9:00　｜　核對提起與受控下降": "8:35–9:00 | Check lifting and controlled lowering",
+ "「A 係": "“A is ",
+ "一，向心": "one: concentric",
+ "。提起腳踭，小腿後面嘅比目魚肌出力變短。B 係": ". As you lift your heels, the soleus at the back of the calf works and shortens. B is ",
+ "二，離心": "two: eccentric",
+ "。腳踭慢慢落返地下，佢仍然出緊力控制速度，同時變長。」": ". As the heels lower slowly to the floor, it still works to control their speed while it lengthens.”",
+ "請同學跟多一輪，留意右側長度圖。提起時金色肌腹嘅下端往上，講「出力變短」。慢慢放低時，下端返到虛線，講「出力變長」。長度變化經放大，方便全班比較。如果有人將下降當成放鬆，追問「你點樣控制腳踭輕輕落地？」": "Follow one more round and watch the length diagram on the right. As the heels rise, the lower end of the gold belly rises. Say “works and shortens”. As they lower slowly, it returns to the dashed line. Say “works and lengthens”. The length change is magnified for comparison. If anyone equates lowering with relaxing, ask “How do you control a soft landing for your heels?”",
+ "「頭先用手臂、大腿同小腿都試過。最後一頁，試吓用同一個方法判斷三種收縮。」": "“We’ve tried this with the arm, thigh and calf. On the last screen, use the same method to distinguish the three contractions.”",
+ "動作示範參考": "Movement demonstration source",
+ "總結｜短、長、大致不變": "Review | Shorter, longer, about the same",
+ "概念整理　／　三種收縮": "Review / Three contractions",
+ "判斷方法": "How to decide",
+ "先指出正在出力的肌肉，再觀察它的長度。": "Name the working muscle first, then observe its length.",
+ "向心收縮時肌肉長度的示意": "Muscle length during a concentric contraction",
+ "離心收縮時肌肉長度的示意": "Muscle length during an eccentric contraction",
+ "大致": "About the",
+ "不變": " same length",
+ "等長收縮時肌肉長度的示意": "Muscle length during an isometric contraction",
+ "課堂總結": "Lesson review",
+ "9:00–10:00　｜　回到開場，重溫三種長度變化": "9:00–10:00 | Revisit the opening question and the three length changes",
+ "「返到第一個問題，『向心』嘅判斷方法係睇邊度？係睇": "“Back to our first question. What should we look at to identify a concentric contraction? Look at ",
+ "正在出力嗰塊肌肉嘅長度": "the length of the working muscle",
+ "。出力變短係向心，出力變長係離心，出力但長度大致不變係等長。」用兩隻手分別做縮短、拉長、保持距離。": ". Working and shortening is concentric. Working and lengthening is eccentric. Working at about the same length is isometric.” Use your hands to show the endpoints moving closer, moving apart and staying the same distance apart.",
+ "帶全班望一輪光帶，再用手比出三種長度變化。講到等長時，保持兩隻手之間嘅距離，指住右邊嗰束輕彈嘅肌腹，請大家睇清楚兩端標記。": "Watch a full cycle of the light bands together. Show the three length changes with your hands. For isometric, keep your hands the same distance apart and point to the gently pulsing muscle belly. Ask everyone to watch its endpoints.",
+ "若有一個術語混淆，請同學先說長度，再配對名稱。多謝大家，在十分鐘結束。": "If a term is confusing, have students describe the length change first and then name the contraction. Thank the class and finish at ten minutes.",
+ "（Understand）": "(Understand)",
+ "（Apply）": "(Apply)",
+ "、": ", ",
+ "，": " ",
+ "丿": "c",
+ "丶": "i",
+ "目前畫面": "Current screen",
+ "講者提示": "Speaker notes",
+ "計時": "Timer",
+ "畫面": "Screen",
+ "← 上一頁": "← Previous",
+ "下一頁 →": "Next →",
+ "示範 D": "Replay D",
+ "計時歸零": "Reset timer",
+ "翻頁": "Navigate",
+ "關閉": "Close",
+ "拖動標題列移動視窗 · 拖動右下角調整大小": "Drag a heading to move a panel. Drag its lower corner to resize.",
+ "還原版面": "Reset layout",
+ "簡報完結": "End of presentation",
+ "還原預設版面？": "Restore the default layout?",
+ "請允許瀏覽器彈出講者視窗": "Allow pop-ups to open Presenter View.",
+ "下一輪預備": "Next round",
+ "提起": "Lift",
+ "停住": "Hold",
+ "慢放": "Lower",
+ "肌腹長度示意": "Muscle belly length",
+ "肱二頭肌": "Biceps",
+ "肘關節": "Elbow joint",
+ "小腿後側": "Calf",
+ "前腳掌貼地": "Forefoot grounded",
+ "肌肉的三種收縮 · 10 分鐘微格教學": "Three types of muscle contraction · 10-minute microteaching lesson",
+ "手肘側視動作示意。金色為上臂前側的肱二頭肌，青色勾勒前臂和啞鈴。": "Side view of the elbow. Gold shows the biceps and teal outlines the forearm and dumbbell.",
+ "發力時肌肉長度的變化示意": "Length of an active muscle",
+ "坐姿提踵側視圖。前腳掌保持貼地，腳跟提起後慢慢放下，琥珀色標示小腿後側肌肉，右側放大圖以同一上端對照肌腹長度。": "Side view of a seated heel raise. The forefoot stays grounded. The heels rise and lower slowly. The calf is amber. The enlarged view aligns the upper end to compare muscle belly length."
+}</script>
+<script id="eda-language-runtime">
+/* The original text nodes and SVGs stay in place so their animation clocks survive a switch. */
+(() => {
+  const dictionary = JSON.parse(document.getElementById('eda-english').textContent);
+  const key = 'EDA3121.language';
+  const originalLang = document.documentElement.lang;
+  let language = 'zh', entries = [], switching;
+  function english(original, element) {
+    const value = original.trim();
+    let translated = dictionary[value];
+    if (value === '心' && element.closest('.poster-heart-word')) translated = 'hea';
+    if (element.closest('.glyph-stream') && value === '心') translated = 't';
+    if (element.closest('.glyph-stream') && value === '向') translated = 'C';
+    if (element.closest('.brief-term') && value.endsWith('收縮')) translated = translated.toLowerCase();
+    if (translated === undefined) return original;
+    return original.replace(value, () => translated);
+  }
+  function capture(root) {
+    const list = [];
+    const walker = root.ownerDocument.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    for (let node; (node = walker.nextNode());) {
+      const el = node.parentElement;
+      if (el.closest('script,style')) continue;
+      const zh = node.data, en = english(zh, el);
+      if (zh !== en) list.push(lang => { node.data = lang === 'en' ? en : zh; });
+    }
+    for (const el of root.querySelectorAll('[title],[aria-label],[alt],[data-title],[data-label]')) {
+      for (const attr of ['title','aria-label','alt','data-title','data-label']) {
+        const zh = el.getAttribute(attr);
+        if (!zh) continue;
+        const en = english(zh, el);
+        if (en !== zh) list.push(lang => el.setAttribute(attr, lang === 'en' ? en : zh));
+      }
+    }
+    return list;
+  }
+  function change(next, animate = false) {
+    if (!['zh','en'].includes(next) || next === language) return;
+    const apply = () => {
+      language = next;
+      document.documentElement.lang = next === 'en' ? 'en' : originalLang;
+      for (const write of entries) write(next);
+      document.title = next === 'en' ? dictionary[title] : title;
+      if (window === window.top) try { localStorage.setItem(key, next); } catch {}
+      for (const b of document.querySelectorAll('#eda-language button')) b.setAttribute('aria-pressed', b.value === next);
+      window.dispatchEvent(new Event('eda-language-change'));
+    };
+    switching?.skipTransition?.();
+    if (animate && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      if (document.startViewTransition) { switching = document.startViewTransition(apply); return; }
+      apply();
+      document.querySelector('.slide.is-active')?.animate([{opacity:.45},{opacity:1}], {duration:220});
+    } else apply();
+  }
+  const title = document.title;
+  window.edaLanguage = {
+    get current() { return language; }, change,
+    text(value) { return language === 'en' ? dictionary[value] ?? value : value; },
+    capture
+  };
+  function init() {
+    for (const sel of ['.deck','.overview']) {
+      const root = document.querySelector(sel);
+      if (root) entries.push(...capture(root));
+    }
+    let initial;
+    try { initial = localStorage.getItem(key); } catch {}
+    if (window !== window.top) {
+      try { initial = window.parent.opener?.edaLanguage?.current || initial; } catch {}
+      window.addEventListener('message', e => {
+        if (e.source === parent && e.data?.type === 'eda-local-language') change(e.data.lang);
+      });
+    } else if (!new URLSearchParams(location.search).has('preview')) {
+      document.getElementById('eda-tools').hidden = false;
+      for (const b of document.querySelectorAll('#eda-language button')) b.onclick = () => change(b.value, true);
+    }
+    change(initial);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',init); else init();
+})();
+</script>
+<script src="firebase-config.js"></script>
+<script src="live-sync.js"></script>
 </body></html>
