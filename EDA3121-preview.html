@@ -833,7 +833,7 @@ dialog.overview.open{grid-auto-rows:max-content}
 .overview .thumb:focus-visible{outline:3px solid var(--mint);outline-offset:4px}
 @media(max-width:720px){dialog.overview{padding:16px}.overview.open{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
 .overview .mini-slide .slide{padding:0!important}
-.brief-tabs{display:none}
+.brief-tabs,.brief-points{display:none}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-delay:0ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
 }
@@ -1752,7 +1752,7 @@ html:lang(en) #join-code .join-en{display:inline}
   body.eda-pocket .deck .poster-suffix {grid-column:3;grid-row:2}
   body.eda-pocket .deck .poster-heart {width:340px;height:340px}
 }
-@media screen and (max-width:767px) and (orientation:portrait){
+@media screen{
 /* The question and its answer share a portrait figure slot so the arm or heel
    can keep moving while the teaching text changes above it. */
 body.eda-pocket .deck > .slide:is(.laboratory,.practice,.heel-page){
@@ -1850,7 +1850,7 @@ html:lang(en) body.eda-pocket .deck > .slide .heel-result{
   display:grid;gap:0;justify-items:end;
 }
 }
-@media screen and (max-width:767px) and (orientation:portrait){
+@media screen{
   /* Stack the demonstrations in reading order and share space between them. */
   body.eda-pocket .deck > :is(.squat-page,.gravity-page,.summary-page){
     display:grid;grid-template-columns:28px minmax(0,1fr) 28px;
@@ -2038,55 +2038,193 @@ html:lang(en) body.eda-pocket .deck > .slide .heel-result{
 
   /* The host keeps the class profile and QR available for both reading panels. */
   body.eda-pocket .deck > .lesson-brief:not(.brief-audience-view){
-    display:grid;grid-template-columns:28px minmax(0,1fr) 28px;
-    grid-template-rows:86px auto minmax(0,1fr) 94px;
-    --brief-copy:clamp(23px,calc(.022 * var(--deck-h) + 1px),30px);
+    display:grid;grid-template-columns:32px minmax(0,1fr) 32px;
+    grid-template-rows:88px auto minmax(0,1fr) calc(var(--pocket-tap) + 28px);
+    --brief-copy:clamp(26px,calc(18px / var(--brief-scale,var(--deck-scale))),35px);
+    --brief-leading:1.58;--brief-gap:clamp(15px,calc(var(--deck-h) * .017),26px);
   }
   body.eda-pocket .deck .lesson-brief:not(.brief-audience-view) .brief-photo{
     inset:0 0 auto auto;width:51%;height:26%;mask-image:radial-gradient(ellipse at 78% 10%,#000 12%,transparent 75%);
   }
   body.eda-pocket .deck .lesson-brief .lecture-head{
-    display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;height:clamp(64px,calc(43px / var(--deck-scale)),80px);
+    display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;height:clamp(64px,calc(43px / var(--brief-scale,var(--deck-scale))),80px);
   }
   body.eda-pocket .deck .lesson-brief .lecture-head .type{grid-area:1/3;justify-self:end;font-size:17px}
   body.eda-pocket .deck .lesson-brief .lecture-head .subject{grid-area:1/1;font-size:16px;text-wrap:balance}
   body.eda-pocket .deck .join-trigger{
-    grid-area:1/2;position:static;transform:none;min-height:clamp(54px,calc(40px / var(--deck-scale)),75px);padding:4px 11px 4px 5px;gap:6px;font-size:17px;
+    grid-area:1/2;position:static;transform:none;min-height:clamp(54px,calc(40px / var(--brief-scale,var(--deck-scale))),75px);padding:4px 11px 4px 5px;gap:6px;font-size:17px;
   }
   body.eda-pocket .deck .join-trigger img{width:38px;height:38px}
   body.eda-pocket .deck .brief-intro{
-    position:relative;inset:auto;grid-area:2 / 2;padding:7px 0 clamp(12px,calc(.018 * var(--deck-h)),25px);
+    position:relative;inset:auto;grid-area:2 / 2;padding:8px 0 var(--brief-gap);
   }
-  body.eda-pocket .deck .brief-intro h1{font-size:clamp(46px,calc(.049 * var(--deck-h)),62px);line-height:1.03;text-wrap:balance}
-  body.eda-pocket .deck .brief-audience{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;margin-top:15px}
-  body.eda-pocket .deck .brief-audience dt{font-size:19px}
-  body.eda-pocket .deck .brief-audience dd{font-size:23px;line-height:1.21;padding-left:12px}
+  body.eda-pocket .deck .brief-intro h1{font-size:clamp(44px,calc(.049 * var(--deck-h)),60px);line-height:1.14;text-wrap:balance}
+  body.eda-pocket .deck .brief-audience{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;margin-top:var(--brief-gap)}
+  body.eda-pocket .deck .brief-audience dt{font-size:20px;line-height:1.45}
+  body.eda-pocket .deck .brief-audience dd{font-size:23px;line-height:1.45;padding-left:14px}
   body.eda-pocket .deck .grid.brief-columns{
-    position:relative;inset:auto;grid-area:3 / 2;grid-template: auto minmax(0,1fr) / minmax(0,1fr);gap:10px;
+    position:relative;inset:auto;grid-area:3 / 2;grid-template: auto minmax(0,1fr) / minmax(0,1fr);gap:var(--brief-gap);
   }
-  body.eda-pocket .deck .brief-tabs{
-    display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:4px;border:1px solid var(--border-strong);border-radius:9px;
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-tabs{
+    display:grid;grid-template-columns:1fr 1fr;gap:12px;border-bottom:1px solid var(--border-strong);
   }
-  body.eda-pocket .deck .brief-tabs button{
-    padding:8px 4px;border:0;border-radius:5px;background:transparent;color:var(--sage);
-    font:600 22px/1.12 var(--font-sans);
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-tabs button{
+    min-height:clamp(46px,calc(40px / var(--brief-scale,var(--deck-scale))),76px);padding:5px 4px 10px;
+    border:0;border-bottom:3px solid transparent;background:transparent;color:var(--sage);
+    font:600 23px/1.25 var(--font-sans);cursor:pointer;
   }
-  body.eda-pocket .deck .brief-tabs button[aria-selected=true]{background:var(--paper);color:var(--ink-deep)}
-  body.eda-pocket .deck .brief-columns[data-panel="0"] .brief-column:last-child,
-  body.eda-pocket .deck .brief-columns[data-panel="1"] .brief-column:nth-child(2){display:none}
-  body.eda-pocket .deck .brief-column{min-height:0;overflow:auto;border:0;overscroll-behavior:contain}
-  body.eda-pocket .deck .brief-column::before,body.eda-pocket .deck .brief-column-head h2{display:none}
-  body.eda-pocket .deck .brief-column-head{padding:3px 0 9px}
-  body.eda-pocket .deck .brief-column-head p{font-size:20px}
-  body.eda-pocket .deck .brief-list > li{min-height:clamp(96px,calc(.10 * var(--deck-h)),152px);padding:clamp(9px,calc(.012 * var(--deck-h)),18px) 0}
-  body.eda-pocket .deck .brief-goals > li{grid-template-columns:109px minmax(0,1fr);gap:10px}
-  body.eda-pocket .deck .brief-id b{font-size:20px}
-  body.eda-pocket .deck .brief-id i{font-size:16px;margin:3px 0 0}
-  body.eda-pocket .deck .brief-list p{font-size:var(--brief-copy);line-height:1.28}
-  body.eda-pocket .deck .brief-list p br{display:none}
-  body.eda-pocket .deck .brief-term i{font-size:.78em}
-  body.eda-pocket .deck .brief-risks h3{font-size:clamp(24px,calc(.024 * var(--deck-h)),31px);line-height:1.13}
-  body.eda-pocket .deck .brief-risks p{margin-top:4px}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-tabs button[aria-selected=true]{border-color:var(--gold);color:var(--paper-light)}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-columns[data-panel="0"] .brief-column:last-child,
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-columns[data-panel="1"] .brief-column:nth-child(2){display:none}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-column{min-height:0;overflow:auto;border:0;overscroll-behavior:contain}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-column::before,body:is(.eda-pocket,.eda-brief-rail) .deck .brief-column-head h2{display:none}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-column-head{align-items:center;justify-content:space-between;gap:10px;padding:0}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-column-head p{font-size:21px;line-height:1.45}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-list > li{
+    grid-template-columns:minmax(0,1fr);align-content:start;gap:9px;min-height:0;padding:calc(var(--brief-gap) + var(--brief-extra,0px)) 0;
+  }
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-list > li:first-child{border-top:0}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-id{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-id b{font-size:22px}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-id i{font-size:20px;margin:0}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-list p{font-size:var(--brief-copy);line-height:var(--brief-leading);margin:0}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-list p br{display:none}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-term i{font-size:.8em}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-risks h3{font-size:calc(var(--brief-copy) * 1.12);line-height:1.32}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-paged .brief-points{display:flex;gap:5px;margin-inline-start:auto;flex:none}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-points button{
+    inline-size:clamp(44px,calc(40px / var(--brief-scale,var(--deck-scale))),76px);min-height:clamp(44px,calc(40px / var(--brief-scale,var(--deck-scale))),76px);
+    padding:0;border:1px solid var(--border-strong);border-radius:50%;background:transparent;color:var(--sage);
+    font:600 22px/1 var(--font-mono);cursor:pointer;
+  }
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-points button[aria-pressed=true]{background:var(--gold);border-color:var(--gold);color:var(--ink-deep)}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-paged .brief-list > li:not(.brief-current){display:none}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-paged .brief-list{
+    margin-top:var(--brief-gap);padding:0 18px;border-inline-start:3px solid var(--border-strong);
+    background:linear-gradient(95deg,rgba(185,210,180,.065),transparent 85%);
+  }
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-paged .brief-list > li{border:0;gap:14px}
+  body:is(.eda-pocket,.eda-brief-rail) .deck :is(.brief-tabs,.brief-points) button:focus-visible{outline:2px solid var(--mint);outline-offset:-3px}
+}
+
+@media screen{
+  /* On a near-square screen the explanation and its moving subject can sit
+     side by side. Each gets the full usable height below the controls. */
+  body.eda-fold .deck{--pocket-inset:32px}
+  body.eda-fold .deck > .lesson-brief:not(.brief-audience-view){
+    grid-template-columns:32px minmax(0,.78fr) 34px minmax(0,1.65fr) 32px;
+    grid-template-rows:94px minmax(0,1fr) calc(var(--pocket-tap) + 26px);
+    --brief-copy:clamp(23px,calc(16.5px / var(--brief-scale,var(--deck-scale))),34px);
+    --brief-gap:clamp(14px,calc(.022 * var(--deck-h)),23px);
+  }
+  body.eda-fold .deck .lesson-brief:not(.brief-audience-view) .brief-photo{
+    inset:auto auto 0 0;width:37%;height:65%;mask-image:radial-gradient(ellipse at 55% 53%,#0007,transparent 69%);
+  }
+  body.eda-fold .deck .brief-intro{grid-area:2/2;align-self:start;padding:0}
+  body.eda-fold .deck .brief-intro h1{font-size:57px;line-height:1.13}
+  body.eda-fold .deck .brief-intro h1 span{display:block}
+  body.eda-fold .deck .brief-audience{grid-template-columns:1fr;gap:8px;margin-top:34px}
+  body.eda-fold .deck .brief-audience dd{border:0;padding:0;font-size:24px;line-height:1.55}
+  body.eda-fold .deck .grid.brief-columns{grid-area:2/4}
+  body.eda-fold .deck .cover .bleed{bottom:13%}
+  body.eda-fold .deck .cover-copy{max-width:78%;bottom:max(15%,calc(var(--pocket-tap) + 58px))}
+  body.eda-fold .deck .wait-line-goals{top:23%;font-size:clamp(77px,calc(.12 * var(--deck-h)),110px)}
+  body.eda-fold .deck .wait-line-risks{top:44%;font-size:clamp(65px,calc(.105 * var(--deck-h)),91px)}
+  body.eda-fold .deck .wait-translation{font-size:34px}
+  body.eda-pocket.eda-fold .deck > .slide:is(.laboratory,.practice,.heel-page){
+    grid-template-columns:32px minmax(0,1.13fr) 24px minmax(0,1fr) 24px;
+    grid-template-rows:64px minmax(0,1fr) calc(var(--pocket-tap) + 38px);
+  }
+  body.eda-fold .deck > .slide :is(.study-copy,.heel-copy){grid-area:2/2;align-self:center}
+  body.eda-fold .deck > .slide :is(.arm-panel,.heel-panel){grid-area:2/4;margin:0}
+  body.eda-fold .deck > .slide :is(.study-title,.practice-title,.heel-title){font-size:48px}
+  body.eda-fold .deck > .slide.study-prompt .study-title{font-size:46px}
+  body.eda-fold .deck > .slide :is(.study-desc,.practice-desc,.heel-setup,.heel-instruction){font-size:25px;line-height:1.4}
+  body.eda-fold .deck > .slide .study-question{font-size:28px;line-height:1.34}
+  body.eda-fold .deck > .slide .rhythm-row{gap:7px}
+  body.eda-fold .deck > .slide .heel-action{font-size:26px}
+  body.eda-fold .deck > .slide .heel-result strong{font-size:25px}
+  body.eda-fold .deck > .slide .heel-legend{gap:10px}
+  body.eda-fold .deck > .slide:is(.laboratory,.practice,.heel-page):is(.answer-paper,.paper-turn){
+    --answer-field:linear-gradient(102deg,#f5edda 6%,#ede7d3 44%,#dce1ca 52%,#98af96 62%,#426950 70%,#193d30 80%,#0b241e);
+    --focus-x:24%;--focus-y:42%;
+  }
+  body.eda-fold .deck > .slide:is(.answer-paper,.paper-turn) .lecture-head .type{color:var(--paper-light)}
+  body.eda-fold .deck > .slide:is(.laboratory,.practice,.heel-page):is(.answer-paper,.paper-turn) .foot-stage :is(b,span){
+    color:var(--reading-sage);
+  }
+  body.eda-fold .deck .squat-steps{grid-template:1fr / repeat(3,minmax(0,1fr));gap:16px}
+  body.eda-fold .deck .squat-step{
+    grid-template:minmax(2.85em,max-content) minmax(0,1fr) minmax(3em,max-content) / minmax(0,1fr);
+    padding-block:10px;font-size:25px;
+  }
+  body.eda-fold .deck .squat-step h3{grid-area:1/1;align-self:start;font-size:30px;line-height:1.23}
+  body.eda-fold .deck .squat-step [data-squat]{grid-area:2/1;max-height:none}
+  body.eda-fold .deck .squat-value{grid-area:3/1;align-self:center}
+  body.eda-fold .deck .squat-value strong{font-size:28px}
+  body.eda-fold .deck .gravity-study{grid-template-columns:33% minmax(0,1fr);column-gap:26px}
+  body.eda-fold .deck .gravity-figure .gravity-arrows{justify-content:center}
+  body.eda-fold .deck .gravity-explanation > p:not(.gravity-mode){line-height:1.38}
+
+  /* A short open screen has room for comparisons across the slide. */
+  body.eda-fold-short .deck .brief-intro h1{font-size:45px}
+  body.eda-fold-short .deck .brief-audience{margin-top:20px}
+  body.eda-fold-short .deck .brief-audience dd{font-size:23px}
+  body.eda-fold-short .deck > .gravity-page{
+    grid-template-columns:32px minmax(0,1fr) 24px minmax(0,1fr) 32px;
+    grid-template-rows:52px auto minmax(0,1fr) auto calc(var(--pocket-tap) + 35px);
+  }
+  body.eda-fold-short .deck .gravity-page > .gravity-heading{grid-area:2/2/3/5}
+  body.eda-fold-short .deck .gravity-study{
+    grid-template:minmax(0,1fr) auto / minmax(0,1fr);row-gap:16px;padding:3px 0;align-items:stretch;
+  }
+  body.eda-fold-short .deck .gravity-descent{grid-area:3/2}
+  body.eda-fold-short .deck .gravity-ascent{grid-area:3/4}
+  body.eda-fold-short .deck .gravity-study .gravity-figure{max-height:none}
+  body.eda-fold-short .deck .gravity-explanation h3{font-size:27px}
+  body.eda-fold-short .deck .gravity-explanation > p:not(.gravity-mode){font-size:21px;line-height:1.3;margin:6px 0}
+  body.eda-fold-short .deck .gravity-explanation .gravity-mode{font-size:27px}
+  body.eda-fold-short .deck .gravity-transfer{grid-area:4/2/5/5}
+  body.eda-fold-short .deck .specimens{grid-template:1fr / repeat(3,minmax(0,1fr));gap:16px}
+  body.eda-fold-short .deck .specimen{display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+  body.eda-fold-short .deck .specimen .length{font-size:34px}
+  body.eda-fold-short .deck .summary-page .specimen [data-fibre]{height:68px;margin:12px 0;width:100%}
+
+  /* In phone landscape the main deck keeps its original canvas and side toolbar.
+     Give the presenter the same reading controls at physical text and touch sizes. */
+  body.eda-brief-rail .deck > .lesson-brief:not(.brief-audience-view){
+    --brief-unit:calc(1px / var(--brief-scale,var(--deck-scale)));
+    --brief-copy:calc(16 * var(--brief-unit));--brief-leading:1.52;--brief-gap:calc(6 * var(--brief-unit));
+    --brief-top:calc(40 * var(--brief-unit) + 16px);
+  }
+  body.eda-brief-rail .deck .lesson-brief .lecture-head{
+    inset:8px 60px auto;height:calc(40 * var(--brief-unit));padding-bottom:6px;
+    display:grid;grid-template-columns:1fr auto 1fr;gap:20px;pointer-events:none;
+  }
+  body.eda-brief-rail .deck .lesson-brief .lecture-head .subject,
+  body.eda-brief-rail .deck .lesson-brief .lecture-head .type{grid-area:1/1;justify-self:start;font-size:calc(10 * var(--brief-unit));line-height:1.2}
+  body.eda-brief-rail .deck .lesson-brief .lecture-head .subject{align-self:start}
+  body.eda-brief-rail .deck .lesson-brief .lecture-head .type{align-self:end}
+  body.eda-brief-rail .deck .join-trigger{
+    grid-area:1/2;position:static;transform:none;min-height:calc(35 * var(--brief-unit));padding:4px 16px 4px 5px;
+    font-size:calc(12 * var(--brief-unit));pointer-events:auto;
+  }
+  body.eda-brief-rail .deck .join-trigger img{width:calc(26 * var(--brief-unit));height:auto}
+  body.eda-brief-rail .deck .brief-intro{inset:var(--brief-top) auto auto 60px;margin:0;width:28%}
+  body.eda-brief-rail .deck .brief-intro h1{font-size:calc(25 * var(--brief-unit));line-height:1.12}
+  body.eda-brief-rail .deck .brief-audience{display:block;margin-top:calc(12 * var(--brief-unit))}
+  body.eda-brief-rail .deck .brief-audience dt{font-size:calc(12 * var(--brief-unit));line-height:1.35}
+  body.eda-brief-rail .deck .brief-audience dd{border:0;padding:0;margin-top:5px;font-size:calc(14 * var(--brief-unit));line-height:1.48}
+  body.eda-brief-rail .deck .grid.brief-columns{
+    inset:var(--brief-top) 60px calc(42 * var(--brief-unit) + 16px) 34%;
+    grid-template:auto minmax(0,1fr) / minmax(0,1fr);gap:var(--brief-gap);margin:0;
+  }
+  body.eda-brief-rail .deck .brief-tabs button{min-height:calc(34 * var(--brief-unit));font-size:calc(14 * var(--brief-unit))}
+  body.eda-brief-rail .deck .brief-column-head p,body.eda-brief-rail .deck .brief-id i{font-size:calc(13 * var(--brief-unit))}
+  body.eda-brief-rail .deck .brief-id b{font-size:calc(14 * var(--brief-unit))}
+  body.eda-brief-rail .deck .brief-column.brief-paged{position:static;overflow:visible}
+  body.eda-brief-rail .deck .brief-paged .brief-points{position:absolute;right:0;top:calc(8px + 2 * var(--brief-unit) - var(--brief-top));z-index:6}
+  body.eda-brief-rail .deck .brief-points button{width:calc(35 * var(--brief-unit));min-height:calc(35 * var(--brief-unit));font-size:calc(14 * var(--brief-unit))}
 }
 
 /* The letterforms keep their original face and size. Share a font-relative
@@ -2371,11 +2509,34 @@ SOFTWARE.
     const tabs=document.createElement('div');
     tabs.className='brief-tabs';tabs.setAttribute('role','tablist');
     tabs.setAttribute('aria-label',intro.dataset.title);
+    // At the chosen reading size keep all three points visible whenever they fit.
+    // Measure the original copy again after rotation, font loading or a language change.
+    function fitPoints(){
+      const panel=panels[Number(columns.dataset.panel)];
+      if(!panel||!panel.clientHeight)return;
+      panel.classList.remove('brief-paged');
+      panel.style.removeProperty('--brief-extra');
+      if(!document.body.matches('.eda-pocket,.eda-brief-rail'))return;
+      const head=panel.querySelector('.brief-column-head'),list=panel.querySelector('.brief-list');
+      const free=panel.clientHeight-head.offsetHeight-list.offsetHeight;
+      if(free<0)panel.classList.add('brief-paged');
+      else panel.style.setProperty('--brief-extra',Math.min(18,Math.floor(free/(2*list.children.length)))+'px');
+    }
+    function selectPoint(panel,index){
+      const items=[...panel.querySelector('.brief-list').children];
+      if(!items[index])return;
+      panel.dataset.point=String(index);
+      items.forEach((item,i)=>item.classList.toggle('brief-current',i===index));
+      [...panel.querySelector('.brief-points').children].forEach((button,i)=>button.setAttribute('aria-pressed',String(i===index)));
+      if(panel===panels[Number(columns.dataset.panel)])columns.dataset.point=String(index);
+    }
     function selectPanel(index){
       columns.dataset.panel=String(index);
+      columns.dataset.point=panels[index].dataset.point;
       [...tabs.children].forEach((button,i)=>{
         button.setAttribute('aria-selected',String(i===index));button.tabIndex=i===index?0:-1;
       });
+      fitPoints();
     }
     panels.forEach((panel,i)=>{
       const button=document.createElement('button');
@@ -2391,11 +2552,28 @@ SOFTWARE.
         selectPanel(next);tabs.children[next].focus();
       };
       tabs.append(button);
+      const points=document.createElement('div');
+      points.className='brief-points';points.setAttribute('role','group');points.setAttribute('aria-labelledby',button.id);
+      panel.querySelector('.brief-column-head').append(points);
+      [...panel.querySelector('.brief-list').children].forEach((item,j)=>{
+        const key=document.createElement('button');key.type='button';key.textContent=String(j+1);
+        key.id=button.id+'-point-'+j;item.id=panel.id+'-point-'+j;
+        key.setAttribute('aria-labelledby',button.id+' '+key.id);key.setAttribute('aria-controls',item.id);
+        key.onclick=()=>selectPoint(panel,j);points.append(key);
+      });
+      selectPoint(panel,0);
     });
     columns.prepend(tabs);selectPanel(0);
+    const layoutObserver=new ResizeObserver(fitPoints);
+    layoutObserver.observe(columns);
+    window.addEventListener('eda-language-change',fitPoints);
+    document.fonts.ready.then(fitPoints);
     if(params.has('preview')){
       window.addEventListener('message',e=>{
-        if(e.source===parent&&e.data?.type==='eda-brief-panel'&&[0,1].includes(e.data.panel))selectPanel(e.data.panel);
+        if(e.source!==parent||e.data?.type!=='eda-brief-panel'||![0,1].includes(e.data.panel))return;
+        if(e.data.scale>0)intro.style.setProperty('--brief-scale',String(e.data.scale));
+        document.body.classList.toggle('eda-brief-rail',e.data.rail===true);
+        selectPanel(e.data.panel);selectPoint(panels[e.data.panel],e.data.point);
       });
     }
     for(const nav of document.querySelectorAll('.deck .deck-nav')){
@@ -4148,29 +4326,42 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
     const topLevel = window === window.top && !query.has('preview');
     const portrait = matchMedia('screen and (max-width: 767px) and (orientation: portrait)');
     const landscape = matchMedia('screen and (max-width: 1024px) and (max-height: 520px) and (orientation: landscape)');
+    const square = matchMedia('screen and (min-aspect-ratio: 3/4) and (max-aspect-ratio: 4/3)');
+    const foldWidth = 880;
+    const embeddedPreview = window !== window.top && query.has('preview');
 
     function fit() {
-      const pocket = portrait.matches && (topLevel || query.has('preview'));
-      const rail = topLevel && landscape.matches;
+      // The presenter window sets each iframe to the main stage's logical dimensions.
+      // The toolbar has already been deducted there, so reuse its chosen composition.
+      const fold = embeddedPreview ? innerWidth === foldWidth : square.matches;
+      const pocket = (fold || portrait.matches) && (topLevel || query.has('preview'));
+      const rail = topLevel && !fold && landscape.matches;
       const handset = topLevel && (pocket || rail);
       const body = document.body;
       body.classList.toggle('eda-pocket', pocket);
+      body.classList.toggle('eda-fold', pocket && fold);
       body.classList.toggle('eda-handset', handset);
       body.classList.toggle('eda-side-tools', rail);
+      if(!embeddedPreview)body.classList.toggle('eda-brief-rail',rail);
       // Reserve the actual controls, including wrapped connection messages and safe areas.
       const viewport = window.visualViewport;
       const visibleHeight = handset && viewport && viewport.scale === 1 ? Math.min(innerHeight, viewport.height) : innerHeight;
       const toolbar = handset && !controls.hidden ? controls.getBoundingClientRect() : null;
       const top = toolbar && pocket ? toolbar.bottom + 3 : 0;
       const right = toolbar && rail ? innerWidth - toolbar.left + 4 : 0;
-      const availableWidth = Math.max(1, innerWidth - right);
+      const visibleWidth = handset && viewport && viewport.scale === 1 ? Math.min(innerWidth, viewport.width) : innerWidth;
+      const availableWidth = Math.max(1, visibleWidth - right);
       const availableHeight = Math.max(1, visibleHeight - top);
-      const width = pocket ? 600 : w;
+      const width = fold && pocket ? foldWidth : pocket ? 600 : w;
       // From 16:9 through 16:10 distribute the extra stage height at the same
       // horizontal scale. Outside that range keep the drawings proportional.
-      const designHeight = pocket ? 900 : Math.max(h, Math.min(w * 10 / 16, w * availableHeight / availableWidth));
-      const scale = Math.min(availableWidth / width, availableHeight / designHeight);
+      // A side toolbar makes a short phone's remaining canvas closer to square;
+      // use that space for the reading panel and match it in the presenter iframe.
+      const maxHeight = rail || (embeddedPreview && innerWidth === w) ? w * .8 : w * 10 / 16;
+      const designHeight = pocket ? 900 : Math.max(h, Math.min(maxHeight, w * availableHeight / availableWidth));
+      const scale = fold && pocket ? availableWidth / width : Math.min(availableWidth / width, availableHeight / designHeight);
       const height = pocket ? availableHeight / scale : designHeight;
+      body.classList.toggle('eda-fold-short', pocket && fold && height < 740);
       body.classList.toggle('eda-taller-stage', !pocket && height > h + .01);
       body.style.setProperty('--toolbar-top-space', top + 'px');
       body.style.setProperty('--toolbar-side-space', right + 'px');
@@ -4584,15 +4775,20 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
      * Two windows sync via BroadcastChannel.
      */
     let presenterWin = null;
+    function briefState(){
+      const state=deck.querySelector('.brief-columns')?.dataset;
+      return {type:'eda-brief-panel',panel:Number(state?.panel)||0,point:Number(state?.point)||0,
+        scale:parseFloat(deck.style.getPropertyValue('--deck-scale')),rail:document.body.classList.contains('eda-side-tools')};
+    }
     function sendPreviewLayout(){
       if(presenterWin && !presenterWin.closed)presenterWin.postMessage({
-        type:'eda-preview-layout',w:deck.clientWidth,h:deck.clientHeight,
-        panel:Number(deck.querySelector('.brief-columns')?.dataset.panel)||0
+        type:'eda-preview-layout',w:deck.clientWidth,h:deck.clientHeight,brief:briefState()
       },'*');
     }
     if(presenterMode){
       new ResizeObserver(()=>{fitThumbnails();sendPreviewLayout();}).observe(deck);
-      new MutationObserver(sendPreviewLayout).observe(deck.querySelector('.brief-columns'),{attributes:true,attributeFilter:['data-panel']});
+      window.addEventListener('resize',sendPreviewLayout);
+      new MutationObserver(sendPreviewLayout).observe(deck.querySelector('.brief-columns'),{attributes:true,attributeFilter:['data-panel','data-point']});
     }
     function sendLessonClock(){
       const epoch=Number(slides[idx].dataset.loopStart);
@@ -4835,7 +5031,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
 
   body.is-dragging-card * { user-select: none !important; }
   body.is-dragging-card iframe { pointer-events: none !important; }
-  @media (max-width:767px) and (orientation:portrait),(max-width:1024px) and (max-height:520px) and (orientation:landscape){
+  @media (max-width:767px) and (orientation:portrait),(max-width:1024px) and (max-height:520px) and (orientation:landscape),(min-aspect-ratio:3/4) and (max-aspect-ratio:4/3){
     #stage{
       display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
       grid-template-rows:minmax(0,1fr) minmax(0,1.12fr) auto;gap:7px;
@@ -4927,7 +5123,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
   var idx = ${startIdx};
   var deckUrl = ${deckUrlJSON};
   var frameWidth = ${deck.clientWidth}, frameHeight = ${deck.clientHeight};
-  var briefPanel = ${Number(deck.querySelector('.brief-columns')?.dataset.panel)||0};
+  var brief = ${embed(briefState())};
   var STORAGE_KEY = ${embed(storageKey)};
   var bc;
   try { bc = new BroadcastChannel(${channelJSON}); } catch(e) {}
@@ -5042,9 +5238,9 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
   window.addEventListener('message',function(e){
     var m=e.data;
     if(e.source!==window.opener||m?.type!=='eda-preview-layout'||!(m.w>0&&m.h>0))return;
-    frameWidth=m.w;frameHeight=m.h;briefPanel=m.panel;
+    frameWidth=m.w;frameHeight=m.h;brief=m.brief;
     rescaleAll();
-    [iframeCur,iframeNxt].forEach(function(f){f.contentWindow?.postMessage({type:'eda-brief-panel',panel:briefPanel},'*');});
+    [iframeCur,iframeNxt].forEach(function(f){f.contentWindow?.postMessage(brief,'*');});
   });
 
   /* ===== Drag (move card by header) ===== */
@@ -5159,7 +5355,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
     }
     if (iframe) {
       rescaleIframe(iframe);
-      iframe.contentWindow.postMessage({type:'eda-brief-panel',panel:briefPanel},'*');
+      iframe.contentWindow.postMessage(brief,'*');
     }
   });
 
