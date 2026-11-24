@@ -1956,6 +1956,38 @@ html:lang(en) body.eda-pocket .deck > .slide .heel-result{
   body.eda-pocket .deck .gravity-arrows > span{font-size:17px}
 }
 
+/* The letterforms keep their original face and size. Share a font-relative
+   amount of travel between the gaps in the actual Chinese or English word. */
+@media screen and (prefers-reduced-motion:no-preference){
+  .has-mode-type .deck > .slide [data-mode-word]:not([data-mode-word="hold"]){
+    --step:min(.29em,calc(var(--word-travel,.58em) / (var(--word-count) - 1)));
+    --extra:calc(var(--word-open,0) * var(--step));
+    letter-spacing:calc(var(--word-rest) + var(--extra));white-space:nowrap;
+  }
+  .rhythm-row,.squat-value,.heel-result{--word-travel:.44em}
+  /* Grow away from the neighbouring length cue. Cancel the extra text advance
+     so its flex/grid column, and the cue itself, stay exactly where they were. */
+  .has-mode-type .deck .squat-value strong[data-mode-word]:not([data-mode-word="hold"]),
+  .has-mode-type .deck .heel-result [data-answer-ink][data-mode-word]{
+    margin-inline-start:calc(var(--ink-margin,0em) - var(--word-count) * var(--extra));
+    --word-edge:-1;
+  }
+  .heel-result [data-answer-ink]{--ink-margin:-.20em}
+  .has-mode-type .deck > .slide [data-mode-word="hold"]{
+    position:relative;left:calc(var(--word-pulse,0) * .012em);
+    top:calc(var(--word-pulse,0) * clamp(1.4px,.034em,3.2px));
+  }
+}
+@media screen and (prefers-reduced-motion:no-preference) and (forced-colors:none){
+  .deck [data-mode-word="lift"]{--wake-side:-1}
+  .deck .answer-paper{--word-echo-ink:52,95,77;--word-echo-light:142,102,56}
+  .has-mode-type .deck > .slide [data-word-trail]{
+    --trail-x:calc(var(--word-edge,1) * var(--wake-side,1) * var(--word-trail) * .085em);
+    text-shadow:var(--trail-x) 0 .012em rgba(var(--word-echo-ink,157,203,178),calc(.27 * var(--word-trail))),
+      calc(1.95 * var(--trail-x)) .012em .028em rgba(var(--word-echo-light,224,184,130),calc(.15 * var(--word-trail)));
+  }
+}
+
 </style>
 </head>
 
@@ -3552,6 +3584,63 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
   const returnMs=2000;
   const forwardMs={brief:7050,cover:7050,poster:6300,lift:4050,lower:4650,hold:3600,follow:10500,squat:4800,gravity:5700,heel:5550,summary:4650};
   const art=new Map();
+
+  function contractionWords(section){
+    const words=[];
+    function bind(el,mode){
+      if(!el)return;
+      el.dataset.modeWord=mode;
+      words.push({el,mode,lastPose:null,lastTrail:0});
+    }
+    const inkMode={shorten:'lift',lengthen:'lower',hold:'hold'};
+    for(const el of section.querySelectorAll('[data-answer-ink]'))bind(el,inkMode[el.dataset.answerInk]);
+    bind(section.querySelector('.term-en'),section.dataset.demo);
+    const squatMode={down:'lower',stay:'hold',up:'lift'};
+    for(const card of section.querySelectorAll('.squat-step,.gravity-study,.specimen')){
+      const mode=card.querySelector('[data-fibre]')?.dataset.fibre ||
+        squatMode[card.querySelector('[data-squat]')?.dataset.squat];
+      for(const el of card.querySelectorAll('.squat-value strong,.gravity-mode,.mode,.serif-en'))bind(el,mode);
+    }
+    if(!words.length)return null;
+    return (shortOpen,longOpen,tension,shortReturn=false,longReturn=false)=>{
+      if(reduced.matches)return;
+      for(const word of words){
+        const {el,mode}=word,holding=mode==='hold',shortening=mode==='lift';
+        const open=shortening?shortOpen:longOpen;
+        const pose=(holding?tension:open).toFixed(4);
+        if(pose!==word.lastPose){
+          el.style.setProperty(holding?'--word-pulse':'--word-open',pose);
+          word.lastPose=pose;
+        }
+        // A trailing impression is strongest in motion and disappears at both endpoints.
+        const returning=!holding&&(shortening?shortReturn:longReturn);
+        const trail=returning?Math.round(1000*4*open*(1-open))/1000:0;
+        if(trail!==word.lastTrail){
+          el.toggleAttribute('data-word-trail',trail>0);
+          if(trail)el.style.setProperty('--word-trail',trail);
+          else el.style.removeProperty('--word-trail');
+          word.lastTrail=trail;
+        }
+      }
+    };
+  }
+
+  // Sample the original tracking when the language or slide layout changes,
+  // never in a drawing frame. Em units follow each label's own type size.
+  function measureContractionWords(){
+    const root=document.documentElement;
+    root.classList.remove('has-mode-type');
+    const metrics=[...document.querySelectorAll('.deck > .slide [data-mode-word]:not([data-mode-word="hold"])')].map(el=>{
+      const style=getComputedStyle(el);
+      return {el,rest:(parseFloat(style.letterSpacing)||0)/parseFloat(style.fontSize),
+        count:Array.from(el.textContent.trim()).length};
+    });
+    for(const {el,rest,count} of metrics){
+      el.style.setProperty('--word-rest',rest.toFixed(5)+'em');
+      el.style.setProperty('--word-count',count);
+    }
+    root.classList.add('has-mode-type');
+  }
   for(const section of sections) {
     const image=section.querySelector('figure.img-frame > img[data-image]');
     if(image){
@@ -3560,7 +3649,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       image.after(copy);
     }
     const arm=section.querySelector('[data-arm]'),photo=section.querySelector('.photo-muscle');
-    const model={arm:arm?armGraphic(arm):null,photo:photo?photographicOverlay(photo):null,
+    const model={arm:arm?armGraphic(arm):null,photo:photo?photographicOverlay(photo):null,words:contractionWords(section),
       fibers:[...section.querySelectorAll('[data-fibre]')].map(el=>({kind:el.dataset.fibre,draw:lengthGraphic(el)})),
       squats:[...section.querySelectorAll('[data-squat]')].map(el=>({mode:el.dataset.squat,draw:squatGraphic(el)}))};
     if(section.dataset.demo==='poster')model.glyphs=glyphStream(section);
@@ -3576,6 +3665,9 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
     }
     art.set(section,model);
   }
+  measureContractionWords();
+  window.addEventListener('eda-language-change',measureContractionWords);
+  new ResizeObserver(measureContractionWords).observe(document.querySelector('.deck'));
 
   function armPose(kind,t){
     if(kind==='hold')return 0;
@@ -3625,7 +3717,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
     meter.rows.forEach(el=>el.classList.toggle('sounding',!isReturn&&el.dataset.part===phase));
     meter.bars.forEach((el,i)=>el.classList.toggle('lit',!isReturn&&i<beat));
   }
-  function draw(section,t,rewinding=false,r=0) {
+  function draw(section,t,rewinding=false,r=0,hasLooped=false) {
     const model=art.get(section),kind=section.dataset.demo;
     model.frameMs=rewinding?forwardMs[kind]+r*returnMs:t*forwardMs[kind];
     if(kind==='gravity'){
@@ -3637,6 +3729,9 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       section.style.setProperty('--rising',Math.sin(rise*Math.PI).toFixed(3));
       section.style.setProperty('--lowering',Math.sin(lower*Math.PI).toFixed(3));
       section.style.setProperty('--gravity-art-opacity',rewinding&&!reduced.matches?smooth((Math.abs(2*r-1)-.13)/.78):1);
+      // The two panels move in succession and exchange poses behind the reset dissolve.
+      const reset=smooth((r-.13)/.74);
+      model.words(rewinding?reset:1-rise,rewinding?1-reset:lower,0,rewinding,rewinding);
       return;
     }
     const strength=rewinding?smooth(r/.14)*smooth((1-r)/.18):0;
@@ -3680,14 +3775,31 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       const showGuide=!rewinding&&!(follow&&t*7>=2&&t*7<4);
       model.arm(pose,origin,showGuide,t,echoTime.map(v=>armPose(kind,v)),gain,tension);
     }
+    let heelHeight=0;
     if(model.heel){
       const stage=t<.46?'up':'down';
-      const position=v=>reduced.matches?(v>=.20&&v<.72?1:0):heelPose(v);
-      model.heel(position(t),stage,tension);
+      heelHeight=reduced.matches?(t>=.20&&t<.72?1:0):heelPose(t);
+      model.heel(heelHeight,stage,tension);
       model.heelRows.forEach(row=>row.classList.toggle('sounding',row.dataset.heelStep===stage));
     }
     if(model.meter)updateMeter(model.meter,t,rewinding,r);
-    for(const f of model.fibers)f.draw(f.kind,smooth(poseTime),echoTime.map(smooth),gain,f.kind==='hold'?tension:0);
+    const progress=smooth(poseTime);
+    if(model.words){
+      if(kind==='follow'){
+        const extension=model.armAngle/54;
+        model.words(t*7<2?extension:0,t*7>4?extension:0,tension,rewinding,rewinding);
+      }else if(kind==='heel'){
+        // The heel has no rewind. Each inactive label settles during the first
+        // part of the opposite stroke while the active label follows the heel.
+        const rising=t<.46;
+        const lowerOpen=rising?(hasLooped?1-smooth(t/.22):0):1-heelHeight;
+        model.words(rising?1-heelHeight:smooth((t-.46)/.22),
+          lowerOpen,0,!rising,rising&&hasLooped);
+      }else{
+        model.words(1-progress,progress,tension,rewinding,rewinding);
+      }
+    }
+    for(const f of model.fibers)f.draw(f.kind,progress,echoTime.map(smooth),gain,f.kind==='hold'?tension:0);
     for(const sq of model.squats)sq.draw(legPose(sq.mode,poseTime),echoTime.map(v=>legPose(sq.mode,v)),gain,sq.mode==='stay'?tension:0);
   }
   // Print and overview have complete, legible static diagrams. Only the active
@@ -3702,7 +3814,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
     const period=duration+(kind==='heel'?0:returnMs);
     const phase=Math.max(0,elapsed)%period,returning=phase>=duration;
     const r=returning?(phase-duration)/returnMs:0;
-    draw(section,returning?1-smooth(r):phase/duration,returning,r);
+    draw(section,returning?1-smooth(r):phase/duration,returning,r,elapsed>=period);
   }
   function play(section,startEpoch=Date.now(),holdPoseUntil=0){
     cancelAnimationFrame(raf);
