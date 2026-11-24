@@ -3511,7 +3511,11 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
           for(const figure of movingSquats)figure.draw(lerp(figure.from,figure.to,part));
           second.style.setProperty('--gravity-art-opacity',lerp(1,figureOpacity,part));
         }else if(shared){
-          if(rewind)rewind.paint(second,study.start-performance.now());
+          if(rewind){
+            const span=turnMs-study.offset;
+            const remaining=span>0?(turnMs-time)/span:0;
+            rewind.paint(second,rewind.duration*remaining);
+          }
           else drawAtElapsed(second,Date.now()-epoch);
         }else{
           const part=smooth(time/turnMs);
@@ -3557,10 +3561,9 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
         const towardAnswer=shared&&to===second;
         rewind=towardAnswer?makeRevealRewind(visible):null;
         if(shared&&!rewind)epoch=Date.now()-art.get(visible).frameMs;
-        const pause=rewind?rewind.duration:0;
         study.target=to;study.rate=to===second?1:-1;study.offset=time;
-        study.start=performance.now()+pause;
-        study.deadline=Date.now()+pause+(study.rate>0?turnMs-time:time);
+        study.start=performance.now();
+        study.deadline=Date.now()+(study.rate>0?turnMs-time:time);
         study.revealing=towardAnswer;
       }
       study={first,second,paint,release,land,setClock,aim,turnMs};
@@ -4008,8 +4011,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
     if(t<.39)return smooth(t/.39);
     return 1-smooth((t-.46)/.54);
   }
-  // Freeze the question's captions while its last painted pose travels home.
-  // A normal loop already on its return keeps the same speed and echoes.
+  // Sample the return along the caption timeline, retaining any live echoes.
   function makeRevealRewind(section){
     const kind=section.dataset.demo,model=art.get(section),forward=forwardMs[kind];
     const heel=kind==='heel',phase=clamp(model.frameMs/forward);
