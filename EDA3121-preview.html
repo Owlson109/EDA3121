@@ -833,7 +833,7 @@ dialog.overview.open{grid-auto-rows:max-content}
 .overview .thumb:focus-visible{outline:3px solid var(--mint);outline-offset:4px}
 @media(max-width:720px){dialog.overview{padding:16px}.overview.open{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
 .overview .mini-slide .slide{padding:0!important}
-.brief-tabs,.brief-points{display:none}
+.brief-tabs{display:none}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-delay:0ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
 }
@@ -2076,12 +2076,16 @@ html:lang(en) body.eda-pocket .deck > .slide .heel-result{
   body:is(.eda-pocket,.eda-brief-rail) .deck .brief-tabs button[aria-selected=true]{border-color:var(--gold);color:var(--paper-light)}
   body:is(.eda-pocket,.eda-brief-rail) .deck .brief-columns[data-panel="0"] .brief-column:last-child,
   body:is(.eda-pocket,.eda-brief-rail) .deck .brief-columns[data-panel="1"] .brief-column:nth-child(2){display:none}
-  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-column{min-height:0;overflow:auto;border:0;overscroll-behavior:contain}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-column{
+    display:flex;flex-direction:column;min-height:0;overflow-x:hidden;overflow-y:auto;border:0;overscroll-behavior:contain;
+  }
   body:is(.eda-pocket,.eda-brief-rail) .deck .brief-column::before,body:is(.eda-pocket,.eda-brief-rail) .deck .brief-column-head h2{display:none}
-  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-column-head{align-items:center;justify-content:space-between;gap:10px;padding:0}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-column-head{flex:none;align-items:center;gap:10px;padding:0}
   body:is(.eda-pocket,.eda-brief-rail) .deck .brief-column-head p{font-size:21px;line-height:1.45}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-list{display:flex;flex-direction:column;flex:1 0 auto}
   body:is(.eda-pocket,.eda-brief-rail) .deck .brief-list > li{
-    grid-template-columns:minmax(0,1fr);align-content:start;gap:9px;min-height:0;padding:calc(var(--brief-gap) + var(--brief-extra,0px)) 0;
+    flex:1 0 auto;grid-template-columns:minmax(0,1fr);align-content:center;gap:9px;min-height:0;
+    padding:max(9px,calc(6px / var(--brief-scale,var(--deck-scale)))) 0;
   }
   body:is(.eda-pocket,.eda-brief-rail) .deck .brief-list > li:first-child{border-top:0}
   body:is(.eda-pocket,.eda-brief-rail) .deck .brief-id{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px}
@@ -2091,20 +2095,7 @@ html:lang(en) body.eda-pocket .deck > .slide .heel-result{
   body:is(.eda-pocket,.eda-brief-rail) .deck .brief-list p br{display:none}
   body:is(.eda-pocket,.eda-brief-rail) .deck .brief-term i{font-size:.8em}
   body:is(.eda-pocket,.eda-brief-rail) .deck .brief-risks h3{font-size:calc(var(--brief-copy) * 1.12);line-height:1.32}
-  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-paged .brief-points{display:flex;gap:5px;margin-inline-start:auto;flex:none}
-  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-points button{
-    inline-size:clamp(44px,calc(40px / var(--brief-scale,var(--deck-scale))),76px);min-height:clamp(44px,calc(40px / var(--brief-scale,var(--deck-scale))),76px);
-    padding:0;border:1px solid var(--border-strong);border-radius:50%;background:transparent;color:var(--sage);
-    font:600 22px/1 var(--font-mono);cursor:pointer;
-  }
-  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-points button[aria-pressed=true]{background:var(--gold);border-color:var(--gold);color:var(--ink-deep)}
-  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-paged .brief-list > li:not(.brief-current){display:none}
-  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-paged .brief-list{
-    margin-top:var(--brief-gap);padding:0 18px;border-inline-start:3px solid var(--border-strong);
-    background:linear-gradient(95deg,rgba(185,210,180,.065),transparent 85%);
-  }
-  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-paged .brief-list > li{border:0;gap:14px}
-  body:is(.eda-pocket,.eda-brief-rail) .deck :is(.brief-tabs,.brief-points) button:focus-visible{outline:2px solid var(--mint);outline-offset:-3px}
+  body:is(.eda-pocket,.eda-brief-rail) .deck .brief-tabs button:focus-visible{outline:2px solid var(--mint);outline-offset:-3px}
 }
 
 @media screen{
@@ -2222,9 +2213,6 @@ html:lang(en) body.eda-pocket .deck > .slide .heel-result{
   body.eda-brief-rail .deck .brief-tabs button{min-height:calc(34 * var(--brief-unit));font-size:calc(14 * var(--brief-unit))}
   body.eda-brief-rail .deck .brief-column-head p,body.eda-brief-rail .deck .brief-id i{font-size:calc(13 * var(--brief-unit))}
   body.eda-brief-rail .deck .brief-id b{font-size:calc(14 * var(--brief-unit))}
-  body.eda-brief-rail .deck .brief-column.brief-paged{position:static;overflow:visible}
-  body.eda-brief-rail .deck .brief-paged .brief-points{position:absolute;right:0;top:calc(8px + 2 * var(--brief-unit) - var(--brief-top));z-index:6}
-  body.eda-brief-rail .deck .brief-points button{width:calc(35 * var(--brief-unit));min-height:calc(35 * var(--brief-unit));font-size:calc(14 * var(--brief-unit))}
 }
 
 /* The letterforms keep their original face and size. Share a font-relative
@@ -2509,34 +2497,11 @@ SOFTWARE.
     const tabs=document.createElement('div');
     tabs.className='brief-tabs';tabs.setAttribute('role','tablist');
     tabs.setAttribute('aria-label',intro.dataset.title);
-    // At the chosen reading size keep all three points visible whenever they fit.
-    // Measure the original copy again after rotation, font loading or a language change.
-    function fitPoints(){
-      const panel=panels[Number(columns.dataset.panel)];
-      if(!panel||!panel.clientHeight)return;
-      panel.classList.remove('brief-paged');
-      panel.style.removeProperty('--brief-extra');
-      if(!document.body.matches('.eda-pocket,.eda-brief-rail'))return;
-      const head=panel.querySelector('.brief-column-head'),list=panel.querySelector('.brief-list');
-      const free=panel.clientHeight-head.offsetHeight-list.offsetHeight;
-      if(free<0)panel.classList.add('brief-paged');
-      else panel.style.setProperty('--brief-extra',Math.min(18,Math.floor(free/(2*list.children.length)))+'px');
-    }
-    function selectPoint(panel,index){
-      const items=[...panel.querySelector('.brief-list').children];
-      if(!items[index])return;
-      panel.dataset.point=String(index);
-      items.forEach((item,i)=>item.classList.toggle('brief-current',i===index));
-      [...panel.querySelector('.brief-points').children].forEach((button,i)=>button.setAttribute('aria-pressed',String(i===index)));
-      if(panel===panels[Number(columns.dataset.panel)])columns.dataset.point=String(index);
-    }
     function selectPanel(index){
       columns.dataset.panel=String(index);
-      columns.dataset.point=panels[index].dataset.point;
       [...tabs.children].forEach((button,i)=>{
         button.setAttribute('aria-selected',String(i===index));button.tabIndex=i===index?0:-1;
       });
-      fitPoints();
     }
     panels.forEach((panel,i)=>{
       const button=document.createElement('button');
@@ -2552,28 +2517,16 @@ SOFTWARE.
         selectPanel(next);tabs.children[next].focus();
       };
       tabs.append(button);
-      const points=document.createElement('div');
-      points.className='brief-points';points.setAttribute('role','group');points.setAttribute('aria-labelledby',button.id);
-      panel.querySelector('.brief-column-head').append(points);
-      [...panel.querySelector('.brief-list').children].forEach((item,j)=>{
-        const key=document.createElement('button');key.type='button';key.textContent=String(j+1);
-        key.id=button.id+'-point-'+j;item.id=panel.id+'-point-'+j;
-        key.setAttribute('aria-labelledby',button.id+' '+key.id);key.setAttribute('aria-controls',item.id);
-        key.onclick=()=>selectPoint(panel,j);points.append(key);
-      });
-      selectPoint(panel,0);
     });
     columns.prepend(tabs);selectPanel(0);
-    const layoutObserver=new ResizeObserver(fitPoints);
-    layoutObserver.observe(columns);
-    window.addEventListener('eda-language-change',fitPoints);
-    document.fonts.ready.then(fitPoints);
     if(params.has('preview')){
       window.addEventListener('message',e=>{
         if(e.source!==parent||e.data?.type!=='eda-brief-panel'||![0,1].includes(e.data.panel))return;
         if(e.data.scale>0)intro.style.setProperty('--brief-scale',String(e.data.scale));
         document.body.classList.toggle('eda-brief-rail',e.data.rail===true);
-        selectPanel(e.data.panel);selectPoint(panels[e.data.panel],e.data.point);
+        if(columns.dataset.panel!==String(e.data.panel))selectPanel(e.data.panel);
+        const panel=panels[e.data.panel];
+        panel.scrollTop=(e.data.scrollRatio||0)*(panel.scrollHeight-panel.clientHeight);
       });
     }
     for(const nav of document.querySelectorAll('.deck .deck-nav')){
@@ -4775,9 +4728,12 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
      * Two windows sync via BroadcastChannel.
      */
     let presenterWin = null;
+    const briefColumns=deck.querySelector('.brief-columns');
     function briefState(){
-      const state=deck.querySelector('.brief-columns')?.dataset;
-      return {type:'eda-brief-panel',panel:Number(state?.panel)||0,point:Number(state?.point)||0,
+      const panel=Number(briefColumns.dataset.panel)||0;
+      const reading=briefColumns.querySelectorAll('.brief-column')[panel];
+      const range=reading.scrollHeight-reading.clientHeight;
+      return {type:'eda-brief-panel',panel,scrollRatio:range>0?reading.scrollTop/range:0,
         scale:parseFloat(deck.style.getPropertyValue('--deck-scale')),rail:document.body.classList.contains('eda-side-tools')};
     }
     function sendPreviewLayout(){
@@ -4788,7 +4744,8 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
     if(presenterMode){
       new ResizeObserver(()=>{fitThumbnails();sendPreviewLayout();}).observe(deck);
       window.addEventListener('resize',sendPreviewLayout);
-      new MutationObserver(sendPreviewLayout).observe(deck.querySelector('.brief-columns'),{attributes:true,attributeFilter:['data-panel','data-point']});
+      new MutationObserver(sendPreviewLayout).observe(briefColumns,{attributes:true,attributeFilter:['data-panel']});
+      briefColumns.addEventListener('scroll',sendPreviewLayout,true);
     }
     function sendLessonClock(){
       const epoch=Number(slides[idx].dataset.loopStart);
@@ -5238,8 +5195,8 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
   window.addEventListener('message',function(e){
     var m=e.data;
     if(e.source!==window.opener||m?.type!=='eda-preview-layout'||!(m.w>0&&m.h>0))return;
-    frameWidth=m.w;frameHeight=m.h;brief=m.brief;
-    rescaleAll();
+    if(frameWidth!==m.w||frameHeight!==m.h){frameWidth=m.w;frameHeight=m.h;rescaleAll();}
+    brief=m.brief;
     [iframeCur,iframeNxt].forEach(function(f){f.contentWindow?.postMessage(brief,'*');});
   });
 
@@ -5353,15 +5310,13 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
     if (iframe && currentTheme) {
       try { iframe.contentWindow.postMessage({ type: 'preview-theme', name: currentTheme }, '*'); } catch(err) {}
     }
-    if (iframe) {
-      rescaleIframe(iframe);
-      iframe.contentWindow.postMessage(brief,'*');
-    }
+    if (iframe) rescaleIframe(iframe);
   });
 
   function postPreviewGoto(iframe, n) {
     try {
       iframe.contentWindow.postMessage({ type: 'preview-goto', idx: n }, '*');
+      if(n===0)iframe.contentWindow.postMessage(brief,'*');
     } catch(e) {}
   }
 
