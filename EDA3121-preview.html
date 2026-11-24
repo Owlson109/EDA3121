@@ -1724,7 +1724,12 @@ html:lang(en) #join-code .join-en{display:inline}
   body.eda-pocket .deck .wait-translation {
     top:68%;left:7%;right:7%;font-size:32px;line-height:1.26;letter-spacing:-.018em;text-wrap:pretty;
   }
-  body.eda-pocket .deck .cover .bleed {inset:0 0 31%}
+  body.eda-pocket .deck .cover .bleed {
+    inset:0 0 31%;
+    /* Fade the photograph and its animated light together into the slide. */
+    -webkit-mask-image:linear-gradient(to bottom,#000 72%,rgba(0,0,0,.88) 80%,rgba(0,0,0,.38) 90%,transparent 99%);
+    mask-image:linear-gradient(to bottom,#000 72%,rgba(0,0,0,.88) 80%,rgba(0,0,0,.38) 90%,transparent 99%);
+  }
   body.eda-pocket .deck .cover .img-frame img {object-fit:cover;object-position:77% 50%}
   body.eda-pocket .deck .cover .img-scrim {
     background:linear-gradient(180deg,rgba(4,17,16,.76),transparent 25%,transparent 55%,var(--ink) 100%);
