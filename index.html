@@ -706,6 +706,7 @@ body.audience-following .deck-nav [data-key^="Arrow"]{display:none}
 .laboratory,.squat-page,.summary-page,.practice,.question-poster,.heel-page,.gravity-page{
   background:radial-gradient(ellipse at 71% 45%,var(--ink-mid),transparent 56%),linear-gradient(115deg,var(--ink-deep),var(--ink) 69%,var(--ink-deep))
 }
+.cover-scene{display:contents}
 .cover .bleed,.cover .img-frame,.cover .img-scrim,.cover .hero-light{position:absolute;inset:0}
 .cover .img-frame{border-radius:0;box-shadow:none;aspect-ratio:auto}
 .cover .img-frame{height:100%;width:100%;overflow:hidden;background:var(--ink-deep)}
@@ -1739,6 +1740,11 @@ html:lang(en) #join-code .join-en{display:inline}
     -webkit-mask-composite:source-in;
     mask-composite:intersect;
   }
+  body.eda-pocket .deck>.cover .cover-scene{
+    display:block;position:absolute;inset:0;background:var(--ink);pointer-events:none;
+  }
+  body.eda-pocket .deck.opening-cover>.cover .img-frame{background:var(--ink-deep)}
+  body.eda-pocket .deck.opening-cover>.cover .img-frame>img[data-image]{visibility:visible}
   body.eda-pocket .deck .brief-photo img {object-position:77% 50%}
   body.eda-pocket .deck .cover-copy {top:auto;bottom:13.8%;left:32px;right:28px;max-width:none}
   body.eda-pocket .deck .cover .cover-kicker {font-size:18px;line-height:1.2;letter-spacing:.10em}
@@ -2306,7 +2312,7 @@ html:lang(en) body.eda-pocket .deck > .slide .heel-result{
   <aside class="notes"><p><strong>課節概覽</strong></p><p>今堂嘅對象係有基礎運動知識嘅中四同中五學生。我會先用二頭彎舉，等同學試吓肌肉出力嗰陣，長度可以點樣變。之後做深蹲同坐姿提踵，請佢哋講出判斷嘅理由，睇吓換咗動作，仲識唔識用同一個方法分析。</p></aside>
 </section>
 
-<section class="slide cover" data-title="封面｜肌肉的三種收縮" data-demo="cover"><div class="bleed"><figure class="img-frame"><img data-image="cover" alt="側光照在彎舉啞鈴的手臂上。"><div class="img-scrim"></div><div class="hero-light"></div><div class="photo-muscle" aria-hidden="true"></div></figure></div><header class="lecture-head"><div class="subject">PVE　／　微格教學</div><div class="type" lang="en">EDA3121</div></header><div class="cover-copy"><div class="cover-kicker">運動科學</div><h1 class="hero-title" data-kinetic-title>肌肉的<span class="gold-title">三種收縮</span></h1><p class="cover-en serif-en" lang="en">Muscle Contraction Types</p></div><footer class="deck-footer lecture-foot"><span class="cover-tutor">導師：Fan King Sang, Nelson</span><div class="foot-stage"><b>01 / 09</b><i class="slash" aria-hidden="true"></i><span>10 分鐘微格教學</span></div><nav class="deck-nav" aria-label="簡報操作"><button type="button" data-key="s" aria-label="講者視窗（S）" title="講者視窗（S）"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3.5" width="18" height="13" rx="2"/><path d="M12 17v4m-4 0h8"/></svg></button><button type="button" data-key="f" aria-label="全螢幕（F）" title="全螢幕（F）"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5m6 0h5v5m0 6v5h-5m-6 0H4v-5"/></svg></button><button type="button" data-key="ArrowLeft" aria-label="上一個畫面（←）" title="上一個畫面（←）"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H4m7-7-7 7 7 7"/></svg></button><button type="button" data-key="ArrowRight" aria-label="下一個畫面（→）" title="下一個畫面（→）"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16m-7-7 7 7-7 7"/></svg></button></nav></footer><aside class="notes"><p class="time"><strong>0:00–0:15　｜　介紹課題</strong></p><p>「今日我哋會用自己隻手試一次彎舉，再將同一個判斷方法用喺深蹲同坐姿提踵。十分鐘之後，你可以講得出邊塊肌肉出緊力，同埋佢嘅長度點樣變。」同學可空手跟做，我用一支輕水樽或小啞鈴示範。</p><p>翻到下一頁，讓大家先睇問題。</p></aside></section>
+<section class="slide cover" data-title="封面｜肌肉的三種收縮" data-demo="cover"><div class="cover-scene"><div class="bleed"><figure class="img-frame"><img data-image="cover" alt="側光照在彎舉啞鈴的手臂上。"><div class="img-scrim"></div><div class="hero-light"></div><div class="photo-muscle" aria-hidden="true"></div></figure></div></div><header class="lecture-head"><div class="subject">PVE　／　微格教學</div><div class="type" lang="en">EDA3121</div></header><div class="cover-copy"><div class="cover-kicker">運動科學</div><h1 class="hero-title" data-kinetic-title>肌肉的<span class="gold-title">三種收縮</span></h1><p class="cover-en serif-en" lang="en">Muscle Contraction Types</p></div><footer class="deck-footer lecture-foot"><span class="cover-tutor">導師：Fan King Sang, Nelson</span><div class="foot-stage"><b>01 / 09</b><i class="slash" aria-hidden="true"></i><span>10 分鐘微格教學</span></div><nav class="deck-nav" aria-label="簡報操作"><button type="button" data-key="s" aria-label="講者視窗（S）" title="講者視窗（S）"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3.5" width="18" height="13" rx="2"/><path d="M12 17v4m-4 0h8"/></svg></button><button type="button" data-key="f" aria-label="全螢幕（F）" title="全螢幕（F）"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5m6 0h5v5m0 6v5h-5m-6 0H4v-5"/></svg></button><button type="button" data-key="ArrowLeft" aria-label="上一個畫面（←）" title="上一個畫面（←）"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12H4m7-7-7 7 7 7"/></svg></button><button type="button" data-key="ArrowRight" aria-label="下一個畫面（→）" title="下一個畫面（→）"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16m-7-7 7 7-7 7"/></svg></button></nav></footer><aside class="notes"><p class="time"><strong>0:00–0:15　｜　介紹課題</strong></p><p>「今日我哋會用自己隻手試一次彎舉，再將同一個判斷方法用喺深蹲同坐姿提踵。十分鐘之後，你可以講得出邊塊肌肉出緊力，同埋佢嘅長度點樣變。」同學可空手跟做，我用一支輕水樽或小啞鈴示範。</p><p>翻到下一頁，讓大家先睇問題。</p></aside></section>
 
 <section class="slide question-poster" data-title="開場投票｜「向心」是指向心臟嗎？" data-demo="poster"><svg class="glyph-stream" viewBox="0 0 1920 1080" aria-hidden="true" focusable="false"></svg>
   <h2 class="poster-type" aria-label="「向心」是指向心臟嗎？">
@@ -3732,7 +3738,11 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
         return {objectPosition:style.objectPosition,transform:style.transform,opacity:style.opacity};
       };
       const imageFrames=[photoStyle(photo),photoStyle(fullPhoto)];
-      const sizeFrames=[photoFrame,fullFrame].map(el=>({width:el.clientWidth+'px',height:el.clientHeight+'px'}));
+      const pocket=document.body.classList.contains('eda-pocket');
+      const sizeFrames=[photoFrame,fullFrame].map(el=>({
+        width:el.clientWidth+'px',height:el.clientHeight+'px',
+        ...(pocket?{left:el.offsetLeft+'px',top:el.offsetTop+'px'}:{})
+      }));
       const duration=1560,travel=1240;
       const glide='cubic-bezier(.42,0,.18,1)';
       const animations=[];
@@ -3750,14 +3760,15 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       animate(photoFrame,sizeFrames,travel);
       if(brief.classList.contains('brief-audience-view'))animate(photoFrame,[{opacity:0},{opacity:1}],travel);
       animate(photo,imageFrames,travel);
-      // Unveil the dark edges late, as the crop arrives at the screen edges.
+      // Desktop unveils the edges of the shared image. On mobile keep its
+      // masking fixed as the fully shaded cover takes over.
       const unmaskAt=960;
       const edgeMask=getComputedStyle(cover.querySelector('.bleed')).maskImage;
       const radialMask=getComputedStyle(photoFrame).maskImage;
       const unmaskFrames=['100% 100%','480% 480%'].map(size=>
         edgeMask==='none'?{maskSize:size}:{
           maskImage:radialMask+', '+edgeMask,
-          maskSize:size+', 100% 100%'
+          maskSize:'100% 100%, 100% 100%'
         });
       const unmask=animate(photoFrame,unmaskFrames,duration-unmaskAt,unmaskAt);
       const pushOut=[
@@ -3768,7 +3779,10 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       for(const el of brief.querySelectorAll('.lecture-head,.brief-intro,.brief-columns,.brief-wait,.lecture-foot')){
         animate(el,pushOut,780,0,'cubic-bezier(.43,0,.56,1)');
       }
-      animate(cover.querySelector('.bleed'),[{opacity:0},{opacity:1}],820,410);
+      // Composite the mobile photo, scrim, edge mask and opaque backdrop
+      // together. Finish the handoff before the transition styles are removed.
+      if(pocket)animate(cover.querySelector('.cover-scene'),[{opacity:0},{opacity:1}],480,810);
+      else animate(cover.querySelector('.bleed'),[{opacity:0},{opacity:1}],820,410);
       animate(cover.querySelector('.cover-copy'),[
         {opacity:0,transform:'translateY(-485px)'},
         {offset:.48,opacity:.88,transform:'translateY(-175px)'},
