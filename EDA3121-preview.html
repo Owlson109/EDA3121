@@ -3028,6 +3028,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
         <circle class="calf-scale-end" cx="653" cy="401" r="4.5" fill="var(--gold-hot)"/>
       </g>
       <g class="heel-figure" stroke-linejoin="round" stroke-linecap="round">
+        <path class="heel-return-trace" fill="none" stroke="var(--trail-ink)" stroke-width="2.6" opacity="0" aria-hidden="true"/>
         <g fill="url(#${id}-limb)" stroke="var(--metal-light)" stroke-width="2"><path class="thigh"/><path class="shin"/></g>
         <path class="heel-foot" fill="url(#${id}-limb)" stroke="var(--metal-light)" stroke-width="2"/>
         <path class="calf-tendon" fill="none" stroke="var(--tendon)" stroke-width="3.8" opacity=".88"/>
@@ -3049,6 +3050,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
     container.append(root);
     const find=c=>root.querySelector('.'+c);
     const parts=Object.fromEntries(['thigh','shin','calf-tendon','heel-foot','leg-detail','calf','calf-glow','ankle-joint','heel-label-line','heel-label-point','heel-direction','calf-zoom','calf-zoom-glow','calf-span','calf-scale-end'].map(key=>[key,find(key)]));
+    const returnTrace=find('heel-return-trace');
     const strands=stripes(find('calf-fibres'),23);
     const zoomThreads=stripes(find('calf-zoom-threads'),19);
     for(let y=475;y<=555;y+=10)find('heel-ticks').append(svg('path',{d:'M327 '+y+' h'+((y-475)%40===0?14:6)}));
@@ -3113,7 +3115,12 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       parts['calf-scale-end'].setAttribute('cy',round(end.y));
       parts['calf-span'].setAttribute('d','M672 151 H698 M692 151 V'+round(end.y)+' M670 '+round(end.y)+' H700');
     }
-    return function draw(flex,step,tension=0) {
+    return function draw(flex,step,tension=0,traceFlex=0,traceGain=0) {
+      if(traceGain>0){
+        const ghost=geometry(traceFlex);
+        returnTrace.setAttribute('d',ghost.shin+ghost.footD);
+        returnTrace.setAttribute('opacity',(traceGain*trailOpacity).toFixed(3));
+      }else if(returnTrace.getAttribute('opacity')!=='0')returnTrace.setAttribute('opacity','0');
       const {ankle,heel,foot,k,thigh,shin,footD,top,bottom,calf,strand,c1}=geometry(flex,tension);
       compare(separation(top,bottom)/restingLength,flex,tension);
       parts.thigh.setAttribute('d',thigh);parts.shin.setAttribute('d',shin);parts['heel-foot'].setAttribute('d',footD);
@@ -3392,7 +3399,8 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       const turnMs=paperChanges?paperStudyMs:studyMs;
       // On a reverse turn the first slide owns the interactive navigation.
       const oldNav=paperChanges?first.querySelector('.deck-nav'):null;
-      const elapsed=art.get(source).frameMs,epoch=Date.now()-elapsed;
+      const elapsed=art.get(source).frameMs;
+      let epoch=Date.now()-elapsed,rewind=null;
       const animations=[],fragments=[];
       const answerReveals=shared?[...second.querySelectorAll('[data-answer-ink]')].map(makeAnswerReveal):[];
       const rest={translate:'0px 0px',opacity:1};
@@ -3510,15 +3518,19 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
         draw:sq.draw,from:art.get(first).squats.find(old=>old.mode===sq.mode).draw.bend,to:sq.draw.bend
       })):[];
       const figureOpacity=toGravity?Number(second.style.getPropertyValue('--gravity-art-opacity')||1):1;
+      let lastCaptionTime=-1;
       function paint(time){
-        if(paperChanges){
-          const light=smooth(time/turnMs);
-          const level=(secondIsPaper?light:1-light).toFixed(4);
-          second.style.setProperty('--paper-level',level);
-          oldNav?.style.setProperty('--paper-level',level);
+        if(time!==lastCaptionTime){
+          lastCaptionTime=time;
+          if(paperChanges){
+            const light=smooth(time/turnMs);
+            const level=(secondIsPaper?light:1-light).toFixed(4);
+            second.style.setProperty('--paper-level',level);
+            oldNav?.style.setProperty('--paper-level',level);
+          }
+          for(const animation of animations)animation.currentTime=time;
+          answerReveals.forEach((paintAnswer,i)=>paintAnswer((time-titleHandoff-i*100)/(850-titleHandoff)));
         }
-        for(const animation of animations)animation.currentTime=time;
-        answerReveals.forEach((paintAnswer,i)=>paintAnswer((time-titleHandoff-i*100)/(850-titleHandoff)));
         if(fromPoster){
           first.style.setProperty('--poster-departure',1-smooth(time/480));
         }else if(toGravity){
@@ -3526,7 +3538,8 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
           for(const figure of movingSquats)figure.draw(lerp(figure.from,figure.to,part));
           second.style.setProperty('--gravity-art-opacity',lerp(1,figureOpacity,part));
         }else if(shared){
-          drawAtElapsed(second,Date.now()-epoch);
+          if(rewind)rewind.paint(second,study.start-performance.now());
+          else drawAtElapsed(second,Date.now()-epoch);
         }else{
           const part=smooth(time/turnMs);
           const pose=forward?lerp(sourceAngle,startAngle,part):lerp(startAngle,sourceAngle,part);
@@ -3534,7 +3547,15 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
           art.get(second).arm(pose,pose,false,part);
         }
       }
-      function endElapsed(page){return shared?Math.max(0,Date.now()-epoch):page===source?elapsed:0;}
+      function endElapsed(page){
+        if(shared)return rewind?0:Math.max(0,Date.now()-epoch);
+        return page===source?elapsed:0;
+      }
+      function land(page){
+        drawAtElapsed(page,endElapsed(page));
+        // Start on the actual reveal frame, even after a background-tab pause.
+        if(rewind)clock(Date.now());
+      }
       function release(){
         if(fromPoster)first.style.removeProperty('--poster-departure');
         answerReveals.forEach(paintAnswer=>paintAnswer(1));
@@ -3555,26 +3576,36 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
         deck.classList.remove('study-settling');
       }
       function setClock(page,notify){
+        clock=notify;
         const at=study.deadline;
-        notify(shared?epoch:at-endElapsed(page),at);
+        notify(shared&&!rewind?epoch:at-endElapsed(page),at);
       }
-      const now=performance.now();
-      study={first,second,target,paint,release,endElapsed,setClock,start:now,turnMs,
-        offset:forward?0:turnMs,rate:forward?1:-1,deadline:Date.now()+turnMs};
+      function aim(to,visible,time=lastCaptionTime){
+        const towardAnswer=shared&&to===second;
+        rewind=towardAnswer?makeRevealRewind(visible):null;
+        if(shared&&!rewind)epoch=Date.now()-art.get(visible).frameMs;
+        const pause=rewind?rewind.duration:0;
+        study.target=to;study.rate=to===second?1:-1;study.offset=time;
+        study.start=performance.now()+pause;
+        study.deadline=Date.now()+pause+(study.rate>0?turnMs-time:time);
+        study.revealing=towardAnswer;
+      }
+      study={first,second,paint,release,land,setClock,aim,turnMs};
+      aim(target,source,forward?0:turnMs);
       if(paperChanges)second.classList.add('paper-turn');
       oldNav?.classList.add('paper-nav');
       first.classList.add('study-old');second.classList.add('study-live');deck.classList.add('study-changing');
       setClock(target,clock);studyFrame();
     }
     function studyTime(){
-      return Math.max(0,Math.min(study.turnMs,study.offset+(performance.now()-study.start)*study.rate));
+      return Math.max(0,Math.min(study.turnMs,study.offset+Math.max(0,performance.now()-study.start)*study.rate));
     }
     function studyFrame(){
       const time=studyTime();
       study.paint(time);
-      if(time===(study.rate>0?study.turnMs:0)){
+      if(performance.now()>=study.start&&time===(study.rate>0?study.turnMs:0)){
         const page=study.target;
-        drawAtElapsed(page,study.endElapsed(page));
+        study.land(page);
         finish(page);return;
       }
       frame=requestAnimationFrame(studyFrame);
@@ -3584,12 +3615,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
         queued={target:to,clock};clock(study.deadline+nextDuration(study.target,to));return;
       }
       queued=null;
-      if(to!==study.target){
-        const time=studyTime();
-        study.offset=time;study.start=performance.now();study.rate=to===study.second?1:-1;
-        study.deadline=Date.now()+(study.rate>0?study.turnMs-time:time);
-        study.target=to;
-      }
+      if(to!==study.target)study.aim(to,study.second);
       study.setClock(to,clock);
     }
     function turnQuestion(source,target,clock){
@@ -3897,8 +3923,9 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       if(question||opening||study){
         // A camera path measured before rotation no longer lands on its
         // subject. Resume the current page on its own animation clock.
+        const restart=study?.revealing&&study.target===active;
         clear();
-        if(active)play(active,Date.now()-art.get(active).frameMs);
+        if(active)play(active,restart?Date.now():Date.now()-art.get(active).frameMs);
       }
     }).observe(deck);
     return {start,clear};
@@ -4008,6 +4035,32 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
     if(t<.39)return smooth(t/.39);
     return 1-smooth((t-.46)/.54);
   }
+  // Freeze the question's captions while its last painted pose travels home.
+  // A normal loop already on its return keeps the same speed and echoes.
+  function makeRevealRewind(section){
+    const kind=section.dataset.demo,model=art.get(section),forward=forwardMs[kind];
+    const heel=kind==='heel',phase=clamp(model.frameMs/forward);
+    const onReturn=!heel&&model.frameMs>=forward;
+    const r0=onReturn?clamp((model.frameMs-forward)/returnMs):0;
+    let extent=phase,distance=onReturn?1-r0:phase;
+    // The heel may already be descending. Its matching point on the rising
+    // stroke gives a direct path to the floor without lifting it a second time.
+    if(heel){
+      distance=Math.min(phase/.39,1,(1-phase)/.54);
+      extent=.39*distance;
+    }
+    const duration=returnMs*distance;
+    const partial=onReturn?null:{extent,tension:model.tension||0};
+    let parked=false;
+    return {duration,paint(page,remaining){
+      if(remaining<=0||!duration){
+        if(!parked){drawAtElapsed(page,0);parked=true;}
+        return;
+      }
+      const r=1-(1-r0)*clamp(remaining/duration);
+      draw(page,extent*(1-smooth(r)),true,r,false,partial);
+    }};
+  }
   // A transverse elastic ripple leaves both attachments fixed. The inner
   // window makes the seven-beat sequence pulse only while the elbow is held.
   function isometricTension(t,duration,begin=0,end=1) {
@@ -4042,9 +4095,9 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
     meter.rows.forEach(el=>el.classList.toggle('sounding',!isReturn&&el.dataset.part===phase));
     meter.bars.forEach((el,i)=>el.classList.toggle('lit',!isReturn&&i<beat));
   }
-  function draw(section,t,rewinding=false,r=0,hasLooped=false) {
+  function draw(section,t,rewinding=false,r=0,hasLooped=false,partial=null) {
     const model=art.get(section),kind=section.dataset.demo;
-    model.frameMs=rewinding?forwardMs[kind]+r*returnMs:t*forwardMs[kind];
+    model.frameMs=rewinding&&!partial?forwardMs[kind]+r*returnMs:t*forwardMs[kind];
     if(kind==='gravity'){
       // The class follows the descent, then stands up. Reset the poses
       // while faded out, so a body never visibly moves against its own arrow.
@@ -4061,7 +4114,8 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
     }
     const strength=rewinding?smooth(r/.14)*smooth((1-r)/.18):0;
     const gain=reduced.matches?strength*.32:strength;
-    const past=rewinding?echoDelays.map(delay=>1-smooth(clamp(r-delay))):[];
+    const extent=partial?partial.extent:1;
+    const past=rewinding?echoDelays.map(delay=>extent*(1-smooth(r-delay))):[];
     const poseTime=reduced.matches?(t<.5?0:1):t;
     const echoTime=reduced.matches?past.map(v=>v<.5?0:1):past;
     const phase=rewinding?'rewind':'forward';
@@ -4084,13 +4138,14 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
     if(model.optionalEffects){
       for(const {animation,duration,delay} of model.optionalEffects)animation.currentTime=delay+duration*t;
     }
-    let tension=0;
+    let tension=partial?partial.tension*(1-smooth(r)):0;
     if(!rewinding&&!reduced.matches){
       const duration=forwardMs[kind];
       if(kind==='follow')tension=isometricTension(t,duration,2/7,4/7);
       else if(kind==='heel')tension=isometricTension(t,duration,.39,.46);
       else if(kind==='hold'||kind==='squat'||kind==='summary')tension=isometricTension(t,duration);
     }
+    model.tension=tension;
     if(model.photo)model.photo(reduced.matches?poseTime:t,gain);
     if(model.arm){
       const follow=kind==='follow';
@@ -4102,9 +4157,9 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
     }
     let heelHeight=0;
     if(model.heel){
-      const stage=t<.46?'up':'down';
+      const stage=rewinding||t>=.46?'down':'up';
       heelHeight=reduced.matches?(t>=.20&&t<.72?1:0):heelPose(t);
-      model.heel(heelHeight,stage,tension);
+      model.heel(heelHeight,stage,tension,rewinding?heelPose(echoTime[1]):0,gain);
       model.heelRows.forEach(row=>row.classList.toggle('sounding',row.dataset.heelStep===stage));
     }
     if(model.meter)updateMeter(model.meter,t,rewinding,r);
@@ -4114,8 +4169,7 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
         const extension=model.armAngle/54;
         model.words(t*7<2?extension:0,t*7>4?extension:0,tension,rewinding,rewinding);
       }else if(kind==='heel'){
-        // The heel has no rewind. Each inactive label settles during the first
-        // part of the opposite stroke while the active label follows the heel.
+        // During ordinary playback each inactive label settles on the opposite stroke.
         const rising=t<.46;
         const lowerOpen=rising?(hasLooped?1-smooth(t/.22):0):1-heelHeight;
         model.words(rising?1-heelHeight:smooth((t-.46)/.22),
