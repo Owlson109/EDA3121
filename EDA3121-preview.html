@@ -4857,6 +4857,15 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
       if (presenterWin && !presenterWin.closed)
         presenterWin.postMessage({type:'eda-language',lang:window.edaLanguage.current,meta:presenterMeta()},'*');
     });
+    function handlePresenterPaging(event, move) {
+      const key=event.key==='Unidentified' || !event.key ? event.code : event.key;
+      const forward=['PageDown','ArrowRight','ArrowDown','MediaTrackNext'].includes(key);
+      const backward=['PageUp','ArrowLeft','ArrowUp','MediaTrackPrevious'].includes(key);
+      if (!forward && !backward) return false;
+      event.preventDefault();
+      if (!event.repeat) move(forward ? 1 : -1);
+      return true;
+    }
     function openPresenterWindow() {
       if (!presenterMode) return;
       if (presenterWin && !presenterWin.closed) {
@@ -5489,8 +5498,11 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
   });
 
   /* ===== Keyboard ===== */
+  const handlePresenterPaging = ${handlePresenterPaging.toString()};
   document.addEventListener('keydown', function(e){
     if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.defaultPrevented || e.target.isContentEditable || e.target.closest?.('input,textarea,select,dialog[open]')) return;
+    if (handlePresenterPaging(e, step=>go(idx+step))) return;
     switch(e.key) {
       case 'ArrowRight': case ' ': case 'PageDown': go(idx + 1); e.preventDefault(); break;
       case 'ArrowLeft':  case 'PageUp':   go(idx - 1); e.preventDefault(); break;
@@ -5588,11 +5600,18 @@ document.querySelector('img[data-image=cover]').src='data:image/webp;base64,UklG
 
     document.addEventListener('keydown', function (e) {
       if (e.metaKey||e.ctrlKey||e.altKey) return;
+      if (e.defaultPrevented || e.target.isContentEditable || e.target.closest?.('input,textarea,select,dialog[open]')) return;
       if (overview?.open) {
         if (e.key === 'Escape' || e.key.toLowerCase() === 'o') { e.preventDefault(); toggleOverview(false); }
         return;
       }
       if (!presenterMode && !['ArrowRight','ArrowLeft','PageDown','PageUp',' ','Enter','Backspace','f','F'].includes(e.key)) return;
+      if (presenterMode && handlePresenterPaging(e, step=>go(idx+step))) return;
+      if (presenterMode && e.key==='F5') {
+        e.preventDefault();
+        if (!e.repeat && !document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(()=>{});
+        return;
+      }
       if (e.target.closest && e.target.closest('button,a') && (e.key==='Enter'||e.key===' ')) return;
       switch (e.key) {
         case 'ArrowRight': case ' ': case 'PageDown': case 'Enter': go(idx+1); e.preventDefault(); break;
